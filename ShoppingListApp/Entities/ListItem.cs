@@ -1,3 +1,5 @@
+namespace ShoppingListApp.Entities;
+
 public class ListItem
 {
     public Guid Id { get; init; }

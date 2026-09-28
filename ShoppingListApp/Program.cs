@@ -1,4 +1,4 @@
-using app.Components;
+using ShoppingListApp.Components;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

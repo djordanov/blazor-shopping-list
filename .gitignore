@@ -1,4 +1,4 @@
-app/obj/
-app/bin/
+ShoppingListApp/obj/
+ShoppingListApp/bin/
 .direnv/
-app/.idea/
+ShoppingListApp/.idea/
