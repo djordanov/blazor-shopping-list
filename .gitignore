@@ -1,0 +1,4 @@
+app/obj/
+app/bin/
+.direnv/
+app/.idea/
