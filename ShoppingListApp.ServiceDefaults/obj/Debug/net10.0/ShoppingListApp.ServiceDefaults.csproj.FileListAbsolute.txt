@@ -1,0 +1,12 @@
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/bin/Debug/net10.0/ShoppingListApp.ServiceDefaults.deps.json
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/bin/Debug/net10.0/ShoppingListApp.ServiceDefaults.dll
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/bin/Debug/net10.0/ShoppingListApp.ServiceDefaults.pdb
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.csproj.AssemblyReference.cache
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.AssemblyInfoInputs.cache
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.AssemblyInfo.cs
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.csproj.CoreCompileInputs.cache
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.dll
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/refint/ShoppingListApp.ServiceDefaults.dll
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ShoppingListApp.ServiceDefaults.pdb
+/home/damianj/code/dotnet-blazor-shopping-list/ShoppingListApp.ServiceDefaults/obj/Debug/net10.0/ref/ShoppingListApp.ServiceDefaults.dll

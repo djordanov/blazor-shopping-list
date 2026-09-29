@@ -5,6 +5,8 @@ using ShoppingListApp.Data;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -14,6 +16,17 @@ builder.Services.AddDbContext<AppDbContext>(o
         .EnableSensitiveDataLogging(builder.Environment.IsDevelopment()));
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
+
+if (!EF.IsDesignTime)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
