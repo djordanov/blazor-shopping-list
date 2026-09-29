@@ -8,7 +8,7 @@
     <ResourcePreloader />
     
     <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["libs/pico.min.css"]" />
+    <link rel="stylesheet" href="@Assets["lib/pico.min.css"]" />
     <script defer src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0" integrity="sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc" crossorigin="anonymous"></script>
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -19,7 +19,8 @@
 <body>
     <Routes />
     <ReconnectModal />
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <!-- unnecessary: use HTMX for interactivity -->
+    <!-- <script src="@Assets["_framework/blazor.web.js"]"></script> -->
 </body>
 
 </html>

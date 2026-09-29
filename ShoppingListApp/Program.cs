@@ -11,7 +11,7 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContext<AppDbContext>(o
+builder.Services.AddDbContextFactory<AppDbContext>(o
     => o.UseNpgsql(configuration.GetConnectionString("Default"))
         .EnableSensitiveDataLogging(builder.Environment.IsDevelopment()));
 
@@ -21,11 +21,9 @@ app.MapDefaultEndpoints();
 
 if (!EF.IsDesignTime)
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await db.Database.MigrateAsync();
-    }
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
 }
 
 // Configure the HTTP request pipeline.

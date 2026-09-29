@@ -1,6 +1,6 @@
 {
   "appHost": {
-    "path": "apphost.cs",
+    "path": "/home/damianj/code/dotnet-blazor-shopping-list/Aspire/apphost.cs",
     "language": "csharp"
   },
   "profiles": {
@@ -19,5 +19,8 @@
         "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true"
       }
     }
+  },
+  "features": {
+    "defaultWatchEnabled": "true"
   }
 }

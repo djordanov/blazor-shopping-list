@@ -1,0 +1,82 @@
+﻿@page "/shopping-list"
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<PageTitle>Shopping List</PageTitle>
+
+<h1>Shopping List</h1>
+
+<h3>ADD NEW</h3>
+<form method="post" @formname="create-shopping-list"
+    hx-post="/shopping-list" hx-select="#new-row" hx-swap="append" hx-target="tbody"
+    hx-on:htmx:after:request="this.reset()">
+    <label for="name">Name:</label>
+    <input id="name" name="name" aria-required="true"/>
+    <button type="submit">SUBMIT</button>
+    <AntiforgeryToken></AntiforgeryToken>
+</form>
+
+@if(IsHtmxPost)
+{
+    <table><tbody>
+        <tr id="new-row">
+            <td>@NewShoppingList?.Name</td>
+        </tr>
+    </tbody></table>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shoppingList in ShoppingLists)
+            {
+                <tr>
+                    <td>@shoppingList.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool IsHtmxPost { get; set; }
+
+    private Entities.ShoppingList? NewShoppingList { get; set; }
+
+    private List<Entities.ShoppingList> ShoppingLists { get; set; } = [];
+
+    [CascadingParameter] HttpContext? HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        IsHtmxPost = HttpContext?.Request.Headers.ContainsKey("HX-Request") == true 
+                     && HttpMethods.IsPost(HttpContext?.Request.Method ?? "");
+
+        if (!IsHtmxPost)
+        {
+            ShoppingLists = await db.ShoppingList.ToListAsync();
+            return;
+        }
+
+        var form = HttpContext is not null ? await HttpContext.Request.ReadFormAsync() : null;
+        var name = form?["name"].ToString();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new Exception();
+        }
+
+        NewShoppingList = new Entities.ShoppingList
+        {
+            Name = name
+        };
+        db.ShoppingList.Add(NewShoppingList);
+        await db.SaveChangesAsync();       
+    }
+}
