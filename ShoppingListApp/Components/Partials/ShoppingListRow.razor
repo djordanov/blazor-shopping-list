@@ -1,8 +1,8 @@
 @using ShoppingListApp.Entities
 
-<article id="@ArticleId">
+<article id="@ArticleId" class="shopping-list-card">
     <p>@ShoppingList?.Name</p>
-    <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-target="closest article">DELETE</button>
+    <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-swap="outerHTML" hx-target="closest article">DELETE</button>
 </article>
 
 @code {
@@ -16,5 +16,4 @@
         
         return base.SetParametersAsync(parameters);
     }
-
 }
