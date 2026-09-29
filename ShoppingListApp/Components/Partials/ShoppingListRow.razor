@@ -1,13 +1,20 @@
 @using ShoppingListApp.Entities
 
-<tr @if(RowId is not null) { id="new-row" }>
-    <td>@ShoppingList?.Name</td>
-    <td>
-        <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-target="closest tr">DELETE</button>
-    </td>
-</tr>
+<article id="@ArticleId">
+    <p>@ShoppingList?.Name</p>
+    <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-target="closest article">DELETE</button>
+</article>
 
 @code {
     [Parameter] public ShoppingList? ShoppingList { get; set; }
-    [Parameter] public string? RowId { get; set; }
+    [Parameter] public string? Id { get; set; }
+    private string? ArticleId { get; set; }
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        ArticleId = Id ?? ShoppingList?.Id.ToString();
+        
+        return base.SetParametersAsync(parameters);
+    }
+
 }

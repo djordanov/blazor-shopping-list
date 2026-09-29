@@ -10,7 +10,7 @@
 
 <h3>ADD NEW</h3>
 <form method="post" @formname="create-shopping-list"
-    hx-post="/shopping-list" hx-select="#new-row" hx-swap="append" hx-target="tbody"
+    hx-post="/shopping-list" hx-select="#new-row" hx-swap="append" hx-target="#lists"
     hx-on:htmx:after:request="this.reset()">
     <label for="name">Name:</label>
     <input id="name" name="name" aria-required="true"/>
@@ -20,27 +20,16 @@
 
 @if(IsHtmxPost)
 {
-    <table><tbody>
-        <ShoppingListRow ShoppingList="NewShoppingList" RowId="new-row" />
-    </tbody></table>
+    <ShoppingListRow ShoppingList="NewShoppingList" Id="new-row" />
+    return;
 }
-else
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Buttons</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shoppingList in ShoppingLists)
-            {
-                <ShoppingListRow ShoppingList="shoppingList" />
-            }
-        </tbody>
-    </table>
-}
+
+<div id="lists">
+    @foreach (var shoppingList in ShoppingLists)
+    {
+        <ShoppingListRow ShoppingList="shoppingList" />
+    }
+</div>
 
 @code {
     private bool IsHtmxPost { get; set; }
