@@ -1,5 +1,23 @@
 {
   "nodes": {
+    "aspire-cli": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1790662357,
+        "narHash": "sha256-XAmZBfHjvzBAlLliWa3gf44g0SaWx5Db3V1+erZSXYE=",
+        "owner": "microsoft",
+        "repo": "aspire",
+        "rev": "9360f2caf8c52ac9ccc42cad7d3d030865d8f86b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microsoft",
+        "repo": "aspire",
+        "type": "github"
+      }
+    },
     "nixpkg": {
       "locked": {
         "lastModified": 1782847225,
@@ -16,6 +34,22 @@
     },
     "nixpkgs": {
       "locked": {
+        "lastModified": 1781577229,
+        "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
         "lastModified": 1782821651,
         "narHash": "sha256-OBddwHNJ+qxOHaKih0bE2PXJeZHlzUC8WOHZrUcnFwY=",
         "rev": "e52c192be9d7b2c4bd4aed326c8731b35f8bb75c",
@@ -29,8 +63,9 @@
     },
     "root": {
       "inputs": {
+        "aspire-cli": "aspire-cli",
         "nixpkg": "nixpkg",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },
