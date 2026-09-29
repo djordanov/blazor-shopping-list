@@ -1,5 +1,6 @@
 ﻿@page "/shopping-list"
 @using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Components.Partials
 @using ShoppingListApp.Data
 @inject IDbContextFactory<AppDbContext> DbFactory
 
@@ -20,12 +21,7 @@
 @if(IsHtmxPost)
 {
     <table><tbody>
-        <tr id="new-row">
-            <td>@NewShoppingList?.Name</td>
-            <td>
-                <button hx-delete="/shopping-list/@NewShoppingList?.Id" hx-swap="delete" hx-target="closest tr">DELETE</button>
-            </td>
-        </tr>
+        <ShoppingListRow ShoppingList="NewShoppingList" RowId="new-row" />
     </tbody></table>
 }
 else
@@ -40,12 +36,7 @@ else
         <tbody>
             @foreach (var shoppingList in ShoppingLists)
             {
-                <tr>
-                    <td>@shoppingList.Name</td>
-                    <td>
-                        <button hx-delete="/shopping-list/@shoppingList.Id" hx-target="closest tr">DELETE</button>
-                    </td>
-                </tr>
+                <ShoppingListRow ShoppingList="shoppingList" />
             }
         </tbody>
     </table>

@@ -1,0 +1,13 @@
+@using ShoppingListApp.Entities
+
+<tr @if(RowId is not null) { id="new-row" }>
+    <td>@ShoppingList?.Name</td>
+    <td>
+        <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-target="closest tr">DELETE</button>
+    </td>
+</tr>
+
+@code {
+    [Parameter] public ShoppingList? ShoppingList { get; set; }
+    [Parameter] public string? RowId { get; set; }
+}
