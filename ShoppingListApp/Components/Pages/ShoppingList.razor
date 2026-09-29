@@ -22,6 +22,9 @@
     <table><tbody>
         <tr id="new-row">
             <td>@NewShoppingList?.Name</td>
+            <td>
+                <button hx-delete="/shopping-list/@NewShoppingList?.Id" hx-swap="delete" hx-target="closest tr">DELETE</button>
+            </td>
         </tr>
     </tbody></table>
 }
@@ -31,6 +34,7 @@ else
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Buttons</th>
             </tr>
         </thead>
         <tbody>
@@ -38,6 +42,9 @@ else
             {
                 <tr>
                     <td>@shoppingList.Name</td>
+                    <td>
+                        <button hx-delete="/shopping-list/@shoppingList.Id" hx-target="closest tr">DELETE</button>
+                    </td>
                 </tr>
             }
         </tbody>

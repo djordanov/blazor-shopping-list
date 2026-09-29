@@ -19,6 +19,23 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
+app.MapDelete("/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
+{
+    var db = await dbFactory.CreateDbContextAsync();
+    var shoppingList = await db.ShoppingList.FindAsync(id);
+    if (shoppingList is null)
+    {
+        return Results.NotFound();
+    }
+
+    db.ShoppingList.Remove(shoppingList);
+    await db.SaveChangesAsync();
+    
+    // one could argue for 204 NoContent instead of 200 Ok
+    // however, this is primarily for HTMX and HTMX ignores 204 NoContent
+    return Results.Ok(); 
+});
+
 if (!EF.IsDesignTime)
 {
     using var scope = app.Services.CreateScope();
