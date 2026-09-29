@@ -35,6 +35,7 @@
           dotnet-sdk_10
           jetbrains.rider
           patchelf
+          nssTools   # lets `dotnet dev-certs https --trust` install into the NSS store (browsers)
         ] ++ [
           aspire-cli.packages.${system}.aspire-cli
         ];
