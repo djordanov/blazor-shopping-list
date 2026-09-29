@@ -2,3 +2,5 @@ ShoppingListApp/obj/
 ShoppingListApp/bin/
 .direnv/
 ShoppingListApp/.idea/
+ShoppingListApp.ServiceDefaults/bin/
+ShoppingListApp.ServiceDefaults/obj/
