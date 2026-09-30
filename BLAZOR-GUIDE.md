@@ -125,7 +125,72 @@ Directives you'll actually use:
 - `@code { }` — the "code-behind" block (fields, properties, methods)
 - `@attribute [Authorize]` — per-page auth
 
-## 5. Lifecycle (the big change from OnGet/OnPost)
+## 5. The component system — composition instead of partials
+
+Everything in Blazor is a component: pages, layouts, form inputs (`InputText` is just a component), even the root `App.razor`. A component is a class (the `.razor` file compiles to one) with a `BuildRenderTree` method, `[Parameter]` properties as inputs, and `EventCallback`/`RenderFragment` for output and content slots. Composition — nesting components and passing data/callbacks — replaces Razor Pages' partial views, view components, and tag helpers.
+
+### Parameters (parent → child)
+
+```razor
+<!-- ItemRow.razor -->
+<tr>
+    <td>@Item.Name</td>
+    <td><button @onclick="() => OnToggle.InvokeAsync(Item)">✓</button></td>
+</tr>
+
+@code {
+    [Parameter] public ShoppingItem Item { get; set; } = default!;
+    [Parameter] public EventCallback<ShoppingItem> OnToggle { get; set; }
+}
+```
+
+Rules that bite:
+1. `[Parameter]` properties are set by the **parent before the first render** and are one-way — mutating them in the child doesn't propagate back.
+2. When a parent re-renders, the child re-renders too (unless `ShouldRender()` says no) — parameter changes flow down automatically.
+3. `[CascadingParameter]` = ambient value passed implicitly to a whole subtree (e.g. `HttpContext` in SSR pages) — use sparingly; it hides the data flow.
+
+### Content & templates (child slots)
+
+Any component accepts child content via `ChildContent`, and generic components accept `RenderFragment<T>` templates — this is how `QuickGrid`'s `ItemTemplate` and layout `@Body` work:
+
+```razor
+<!-- Card.razor -->
+<div class="card">
+    <div class="card-header">@Title</div>
+    <div class="card-body">@ChildContent</div>   <!-- slot -->
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
+
+<!-- Usage -->
+<Card Title="Groceries">
+    <p>Whatever markup the parent wants here.</p>
+</Card>
+```
+
+### Events (child → parent)
+
+`EventCallback<T>` is the child's way to call back into parent code (already seen in §8). `StateHasChanged` fires if needed; you almost never call it manually because invoking an `EventCallback` re-renders the parent automatically.
+
+### Render tree & diffing
+
+At runtime every component produces a **render tree** (a tree of C# render-tree-frame calls, not a virtual DOM like React — but conceptually the same idea). After an event handler runs, Blazor re-renders the affected components and diffs the new tree against the previous one, applying only the changed DOM nodes. There is no per-request re-render in interactive mode — renders happen when state changes. This is why the interactive toggle in §13 needed no `Items = await …ToListAsync()` refresh.
+
+### Razor Pages → component mapping
+
+| Razor Pages concept | Blazor equivalent |
+|---|---|
+| Partial view (`_ItemRow.cshtml`) | Child component (`ItemRow.razor`) |
+| View component / tag helper | Component with `[Parameter]`s |
+| `RenderSection("Scripts")` / layout body | `RenderFragment` slots (`@Body`, `ChildContent`) |
+| `ViewData` / `ViewBag` | `[Parameter]` or `CascadingParameter` |
+| `ITempData` | Component state in the circuit (or `PersistentComponentState`) |
+| `@await Html.PartialAsync(...)` | `<ItemRow Item="item" />` — declarative, no await |
+
+## 6. Lifecycle (the big change from OnGet/OnPost)
 
 There is no per-request handler anymore in interactive mode. Instead:
 
@@ -139,7 +204,7 @@ Rerenders happen automatically when state changes (event handler runs → compon
 
 ⚠️ Navigation between different route parameters **reuses the component** — refresh EF data in `OnParametersSetAsync`, not `OnInitializedAsync`, or you'll see stale data in Edit pages.
 
-## 6. Data access pattern (use this, not what the movie tutorial did)
+## 7. Data access pattern (use this, not what the movie tutorial did)
 
 From your reading-list app you've already seen the recommended .NET 8+ pattern — keep it:
 
@@ -154,7 +219,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(o => o.UseSqlite(...));
 - For a long-lived **interactive page** holding a list: `@implements IAsyncDisposable`, create the context in `OnInitializedAsync`, expose `IQueryable` or a materialized list, dispose in `DisposeAsync`.
 - Static SSR pages (like a read-only Index): create the context in `OnInitializedAsync`, query with `.ToListAsync()` before rendering, or use `QuickGrid` with `Items="@db.Items"` (EF adapter streams query results *during* render — that's what `AddQuickGridEntityFrameworkAdapter()` was for).
 
-## 7. Events & binding — the "full stack" magic
+## 8. Events & binding — the "full stack" magic
 
 These only work in **interactive** components (in static SSR they throw at build/run):
 
@@ -182,7 +247,7 @@ These only work in **interactive** components (in static SSR they throw at build
 
 This replaces "partial view + handler postback" — you'll build the whole shopping list out of small components calling each other like this.
 
-## 8. Forms & validation
+## 9. Forms & validation
 
 Two worlds — know which you're in:
 
@@ -191,7 +256,7 @@ Two worlds — know which you're in:
 
 Both use `<DataAnnotationsValidator />`, `<ValidationSummary />`, `<ValidationMessage For="() => Model.Prop" />` — same validation attributes you already use in Razor Pages and Azure Functions DTOs.
 
-## 9. Routing & navigation
+## 10. Routing & navigation
 
 - `@page "/items"` and `@page "/items/{Id:int}"` — route constraints work like Razor Pages (`{Id:int}`, `{Slug?}`).
 - `[Parameter] public int Id { get; set; }` gets the route value — no `OnGet(int? id)` handler signature dance.
@@ -202,14 +267,14 @@ Both use `<DataAnnotationsValidator />`, `<ValidationSummary />`, `<ValidationMe
   <NavLink href="/items" Match="NavLinkMatch.All">Items</NavLink>
   ```
 
-## 10. Layout & wwwroot
+## 11. Layout & wwwroot
 
 - `MainLayout.razor` = `_Layout.cshtml`. `@Body` where the page goes. `@layout MainLayout` sets it (or inherit from `App.razor` default).
 - `App.razor` holds `<Routes>`, `<HeadOutlet>`, base HTML — replaces the root `_ViewStart`/page html wrapper.
 - CSS: co-located `MyComponent.razor.css` = **CSS isolation scoped to that component**. Global CSS goes to `wwwroot/css/app.css`. `MapStaticAssets()` replaces `UseStaticFiles` (fingerprinted, better caching).
 - Plain `<script>` in a component doesn't reliably load — use JS interop (`IJSRuntime`) or put scripts in `App.razor` / wwwroot.
 
-## 11. Things that will bite you (coming from Razor Pages)
+## 12. Things that will bite you (coming from Razor Pages)
 
 1. **`@bind`/`@onclick` in a static SSR page throws** — the build error looks cryptic; remember: no `@rendermode`, no events.
 2. **Prerendering runs `OnInitializedAsync` twice** and `HttpContext` is null on the second (interactive) run. Guard with `if (OperatingSystem.IsBrowser())`-style checks or just don't use `HttpContext` in pages.
@@ -219,7 +284,7 @@ Both use `<DataAnnotationsValidator />`, `<ValidationSummary />`, `<ValidationMe
 6. **Parameters are read-only after set** — overwriting `[Parameter]` properties in code doesn't rebind to the parent; use a private field for local edits.
 7. **Overposting** still applies: `[SupplyParameterFromForm]` on SSR forms binds the model — bind only what you accept (same caution as Razor Pages model binding).
 
-## 12. Three ways to check off an item — the render modes in practice
+## 13. Three ways to check off an item — the render modes in practice
 
 The same feature ("toggle `IsPurchased` on a shopping item") looks completely different depending on the render mode. This is the clearest way to internalize the difference between the three worlds.
 
@@ -353,7 +418,7 @@ Lifecycle:
 
 Notes:
 - The handler mutates the tracked EF entity and saves — no reload, no redirect, no `Items = await …ToListAsync()`. Blazor re-renders automatically when the handler completes. That's the whole payoff of Interactive mode.
-- Long-lived `DbContext` in a circuit is exactly why the factory pattern exists (see §6) — one circuit = one user session, not one request.
+- Long-lived `DbContext` in a circuit is exactly why the factory pattern exists (see §7) — one circuit = one user session, not one request.
 
 ### c) Pure WASM — the component runs in the browser
 
@@ -439,7 +504,7 @@ Notes:
 
 For the shopping list: start with **b)** to learn the Blazor-native model, then re-implement the toggle as **a)** once to feel the difference — it's the fastest way to understand what each render mode actually costs you.
 
-## 13. Shopping list app — suggested build plan
+## 14. Shopping list app — suggested build plan
 
 **Goal:** master Blazor by doing CRUD + the interactive stuff Razor Pages can't do.
 
@@ -504,7 +569,7 @@ public class ShoppingList
 - Each page ≤ ~150 lines or refactored into child components
 - You can explain to a colleague why you chose `InteractiveServer` over `Auto`/`WASM` for this app (server holds state, small user base, no offline requirement)
 
-## 14. Reference
+## 15. Reference
 
 - Official docs home: https://learn.microsoft.com/aspnet/core/blazor/
 - Render modes: https://learn.microsoft.com/aspnet/core/blazor/components/render-modes
