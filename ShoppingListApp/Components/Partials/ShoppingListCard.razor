@@ -1,7 +1,7 @@
 @using ShoppingListApp.Entities
 
 <article id="@ArticleId" class="shopping-list-card">
-    <p>@ShoppingList?.Name</p>
+    <a href="/shopping-list/@ShoppingList?.Id">@ShoppingList?.Name</a>
     <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-swap="outerHTML" hx-target="closest article">DELETE</button>
 </article>
 
@@ -10,10 +10,8 @@
     [Parameter] public string? Id { get; set; }
     private string? ArticleId { get; set; }
 
-    public override Task SetParametersAsync(ParameterView parameters)
+    protected override void OnParametersSet()
     {
         ArticleId = Id ?? ShoppingList?.Id.ToString();
-        
-        return base.SetParametersAsync(parameters);
     }
 }

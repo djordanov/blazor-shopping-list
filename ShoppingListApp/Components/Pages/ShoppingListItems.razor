@@ -1,0 +1,57 @@
+@page "/shopping-list/{id:guid}"
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
+@using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<PageTitle>Shopping List @Id</PageTitle>
+
+<h1>Shopping List @Id</h1>
+
+<form method="post" @formname="create-section"
+      hx-post="/shopping-list/@Id/section" hx-swap="append" hx-target="#sections"
+      hx-on:htmx:after:request="this.reset()">
+    <label for="name">Section Name:</label>
+    <input id="name" name="name" aria-required="true"/>
+    <button type="submit">SUBMIT</button>
+    <AntiforgeryToken></AntiforgeryToken>
+</form>
+
+<div id="sections">
+    @foreach (var section in ShoppingList?.Sections ?? [])
+    {
+        <article>
+            <header>
+                <h3>@section.Name</h3>
+                <button hx-delete="/shopping-list/@ShoppingList?.Id/section/@section.Id" hx-swap="outerHTML" hx-target="closest article">DELETE</button>
+            </header>
+            @foreach (var item in (ShoppingList?.ListItems ?? []).Where(i => i.Section == section))
+            {
+                <p>@item.Item?.Name</p>
+            }
+        </article>
+    }
+
+    <article>
+        @foreach (var item in (ShoppingList?.ListItems ?? []).Where(i => i.Section == null))
+        {
+            <p>@item.Item?.Name</p>
+        }
+    </article>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    
+    private ShoppingList? ShoppingList { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+
+        ShoppingList = await db.ShoppingList
+            .Include(sl => sl.Sections)
+            .Include(sl => sl.ListItems)
+            .FirstOrDefaultAsync(sl => sl.Id == Id);
+    }
+}

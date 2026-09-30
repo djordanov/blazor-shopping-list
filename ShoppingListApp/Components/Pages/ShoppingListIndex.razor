@@ -18,22 +18,21 @@
     <AntiforgeryToken></AntiforgeryToken>
 </form>
 
-@if(IsHtmxPost)
+@if(HttpContext?.Request.Headers.ContainsKey("HX-Request") == true
+    && HttpMethods.IsPost(HttpContext?.Request.Method ?? ""))
 {
-    <ShoppingListRow ShoppingList="NewShoppingList" />
+    <ShoppingListCard ShoppingList="NewShoppingList" />
     return;
 }
 
 <div id="list">
     @foreach (var shoppingList in ShoppingLists)
     {
-        <ShoppingListRow ShoppingList="shoppingList" />
+        <ShoppingListCard ShoppingList="shoppingList" />
     }
 </div>
 
 @code {
-    private bool IsHtmxPost { get; set; }
-
     private Entities.ShoppingList? NewShoppingList { get; set; }
 
     private List<Entities.ShoppingList> ShoppingLists { get; set; } = [];
@@ -44,7 +43,7 @@
     {
         await using var db = await DbFactory.CreateDbContextAsync();
 
-        if (HttpContext?.Request.Headers.ContainsKey("HX-Request") == true)
+        if (HttpContext?.Request.Headers.ContainsKey("HX-Request") != true)
         {
             ShoppingLists = await db.ShoppingList.ToListAsync();
             return;
