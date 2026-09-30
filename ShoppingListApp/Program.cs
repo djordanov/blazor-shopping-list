@@ -79,6 +79,59 @@ app.MapDelete("/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}", a
     // however, this is primarily for HTMX and HTMX ignores 204 NoContent
     return Results.Ok(); 
 });
+app.MapPost("/shopping-list/{shoppingListId:Guid}/item", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
+{
+    var db = await dbFactory.CreateDbContextAsync();
+    var form = await httpContext.Request.ReadFormAsync();
+    var name = form["name"].ToString();
+    var sectionId = new Guid(form["sectionId"].ToString());
+    if (string.IsNullOrWhiteSpace(name))
+    {
+        return Results.BadRequest();
+    }
+
+    var item = await db.Item.FirstOrDefaultAsync(i => i.Name == name);
+    if (item is null)
+    {
+        item = new Item
+        {
+            Name = name
+        };
+        db.Add(item);
+    }
+    
+    var listItem = new ListItem
+    {
+        ShoppingListId = shoppingListId,
+        SectionId = sectionId,
+        Item = item
+    };
+    
+    db.ListItem.Add(listItem);
+    await db.SaveChangesAsync();
+    return new RazorComponentResult<ItemCard>(new
+    {
+        ShoppingListId = shoppingListId,
+        SectionId = sectionId,
+        Item = listItem
+    });
+});
+app.MapDelete("/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
+{
+    var db = await dbFactory.CreateDbContextAsync();
+    var item = await db.ListItem.FindAsync(itemId);
+    if (item is null || item.ShoppingListId != shoppingListId)
+    {
+        return Results.NotFound();
+    }
+
+    db.ListItem.Remove(item);
+    await db.SaveChangesAsync();
+    
+    // one could argue for 204 NoContent instead of 200 Ok
+    // however, this is primarily for HTMX and HTMX ignores 204 NoContent
+    return Results.Ok(); 
+});
 
 if (!EF.IsDesignTime)
 {

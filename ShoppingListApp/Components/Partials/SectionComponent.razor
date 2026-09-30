@@ -11,8 +11,9 @@
     }
     @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
     {
-        <p>@item.Item?.Name</p>
+        <ItemCard ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCard>
     }
+    <ItemCard ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCard>
 </article>
 
 @code {

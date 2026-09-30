@@ -1,0 +1,31 @@
+@using ShoppingListApp.Entities
+
+@if (Item is null)
+{
+    <form method="post" @formname="create-item"
+          hx-post="/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="closest article"
+          hx-on:htmx:after:request="this.reset()">
+        <div>
+            <label for="name">Item Name:</label>
+            <input id="name" name="name" aria-required="true"/>
+        </div>
+        <input type="hidden" name="sectionId" value="@SectionId" />
+        <button type="submit">SUBMIT</button>
+        <AntiforgeryToken></AntiforgeryToken>
+    </form>
+    return;
+}
+
+<div class="item-card">
+    <p>@Item?.Item?.Name</p>
+    <p>@Item?.IsPurchased</p>
+    <button onclick="">COLLECTED</button>
+    <button hx-delete="/shopping-list/@ShoppingListId/item/@Item?.Id" 
+            hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
+</div>
+
+@code {
+    [Parameter] public Guid ShoppingListId { get; set; }
+    [Parameter] public Guid? SectionId { get; set; }
+    [Parameter] public ListItem? Item { get; set; }    
+}
