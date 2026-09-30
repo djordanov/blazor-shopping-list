@@ -1,0 +1,22 @@
+@using ShoppingListApp.Entities
+
+<article>
+    @if (Section is not null)
+    {   
+        <header>
+            <h3>@Section.Name</h3>
+            <button hx-delete="/shopping-list/@ShoppingListId/section/@Section.Id" 
+                hx-swap="outerHTML" hx-target="closest article">DELETE</button>
+        </header>
+    }
+    @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
+    {
+        <p>@item.Item?.Name</p>
+    }
+</article>
+
+@code {
+    [Parameter] public Guid ShoppingListId { get; set; }
+    [Parameter] public Section? Section { get; set; }
+    [Parameter] public required List<ListItem> Items { get; set; }
+}

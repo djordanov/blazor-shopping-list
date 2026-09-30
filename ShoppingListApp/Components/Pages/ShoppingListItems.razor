@@ -1,5 +1,6 @@
 @page "/shopping-list/{id:guid}"
 @using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Components.Partials
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
@@ -20,30 +21,19 @@
 <div id="sections">
     @foreach (var section in ShoppingList?.Sections ?? [])
     {
-        <article>
-            <header>
-                <h3>@section.Name</h3>
-                <button hx-delete="/shopping-list/@ShoppingList?.Id/section/@section.Id" hx-swap="outerHTML" hx-target="closest article">DELETE</button>
-            </header>
-            @foreach (var item in (ShoppingList?.ListItems ?? []).Where(i => i.Section == section))
-            {
-                <p>@item.Item?.Name</p>
-            }
-        </article>
+        <SectionComponent ShoppingListId="Id" Section="section" Items="section.ListItems"></SectionComponent>
     }
 
-    <article>
-        @foreach (var item in (ShoppingList?.ListItems ?? []).Where(i => i.Section == null))
-        {
-            <p>@item.Item?.Name</p>
-        }
-    </article>
+    @if (ItemsWithoutSection.Any())
+    {
+        <SectionComponent ShoppingListId="Id" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>   
+    }
 </div>
 
 @code {
     [Parameter] public Guid Id { get; set; }
-    
     private ShoppingList? ShoppingList { get; set; }
+    private List<ListItem> ItemsWithoutSection { get; set; } = [];
 
     protected override async Task OnParametersSetAsync()
     {
@@ -52,6 +42,9 @@
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections)
             .Include(sl => sl.ListItems)
+            .ThenInclude(i => i.Item)
             .FirstOrDefaultAsync(sl => sl.Id == Id);
+
+        ItemsWithoutSection = (ShoppingList?.ListItems ?? []).Where(i => i.SectionId == null).ToList();
     }
 }

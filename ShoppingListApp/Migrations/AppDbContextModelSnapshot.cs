@@ -50,7 +50,7 @@ namespace ShoppingListApp.Migrations
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SectionId")
+                    b.Property<Guid?>("SectionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ShoppingListId")
@@ -115,9 +115,7 @@ namespace ShoppingListApp.Migrations
 
                     b.HasOne("ShoppingListApp.Entities.Section", "Section")
                         .WithMany("ListItems")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SectionId");
 
                     b.HasOne("ShoppingListApp.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ListItems")

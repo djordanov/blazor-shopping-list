@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using ShoppingListApp.Components;
 using Microsoft.EntityFrameworkCore;
+using ShoppingListApp.Components.Partials;
 using ShoppingListApp.Data;
 using ShoppingListApp.Entities;
 
@@ -54,7 +56,12 @@ app.MapPost("/shopping-list/{shoppingListId:Guid}/section", async (IDbContextFac
     
     db.Section.Add(section);
     await db.SaveChangesAsync();
-    return Results.Content($"<h3>{section.Name}</h3>", "text/html");
+    return new RazorComponentResult<SectionComponent>(new
+    {
+        ShoppingListId = shoppingListId,
+        Section = section,
+        Items = new List<ListItem>()
+    });
 });
 app.MapDelete("/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
 {
