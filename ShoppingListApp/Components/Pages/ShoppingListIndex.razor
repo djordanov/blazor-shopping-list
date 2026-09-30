@@ -43,10 +43,8 @@
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbFactory.CreateDbContextAsync();
-        IsHtmxPost = HttpContext?.Request.Headers.ContainsKey("HX-Request") == true 
-                     && HttpMethods.IsPost(HttpContext?.Request.Method ?? "");
 
-        if (!IsHtmxPost)
+        if (HttpContext?.Request.Headers.ContainsKey("HX-Request") == true)
         {
             ShoppingLists = await db.ShoppingList.ToListAsync();
             return;
@@ -59,11 +57,31 @@
             throw new Exception();
         }
 
-        NewShoppingList = new Entities.ShoppingList
+        if (HttpMethods.IsPost(HttpContext?.Request.Method ?? ""))
         {
-            Name = name
-        };
-        db.ShoppingList.Add(NewShoppingList);
+            NewShoppingList = new Entities.ShoppingList
+            {
+                Name = name
+            };
+            db.ShoppingList.Add(NewShoppingList);
+        }
+
+        if (HttpMethods.IsPut(HttpContext?.Request.Method ?? ""))
+        {
+            var id = form?["id"].ToString();
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new Exception();
+            }
+
+            var shoppingList = new Entities.ShoppingList
+            {
+                Id = new Guid(id),
+                Name = name
+            };
+            db.Add(shoppingList);
+        }
+        
         await db.SaveChangesAsync();       
     }
 }
