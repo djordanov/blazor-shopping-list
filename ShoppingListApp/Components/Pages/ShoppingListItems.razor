@@ -7,15 +7,26 @@
 
 <PageTitle>@ShoppingList?.Name</PageTitle>
 
-<h1>@ShoppingList?.Name</h1>
+<div>
+    <select onchange="window.location = this.value">
+        <option value="/shopping-list/">-- Select a Shopping List --</option>
+        @foreach (var shoppingList in AllShoppingLists)
+        {
+            <ShoppingListCard ShoppingList="@shoppingList" IsSelected="@(shoppingList == ShoppingList)"></ShoppingListCard>
+        }
+    </select>
+    
+    <form method="post" @formname="create-shopping-list"
+          hx-post="/shopping-list" hx-swap="append" hx-target="select"
+          hx-on:htmx:after:request="this.reset()">
+        <h3>Add new Shopping List</h3>
+        <label for="name">Name:</label>
+        <input name="name" aria-required="true"/>
+        <button type="submit">SUBMIT</button>
+        <AntiforgeryToken></AntiforgeryToken>
+    </form>
+</div>
 
-<select onchange="window.location = this.value">
-    <option value="/shopping-list/">-- Select a Shopping List --</option>
-    @foreach (var shoppingList in AllShoppingLists)
-    {
-        <option value="/shopping-list/@shoppingList.Id" selected="@(shoppingList.Id == ShoppingList?.Id)">@shoppingList.Name</option>
-    }
-</select>
 
 <form method="post" @formname="create-section"
       hx-post="/shopping-list/@Id/section" hx-swap="append" hx-target="#sections"

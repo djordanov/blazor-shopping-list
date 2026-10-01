@@ -1,17 +1,8 @@
 @using ShoppingListApp.Entities
 
-<article id="@ArticleId" class="shopping-list-card">
-    <a href="/shopping-list/@ShoppingList?.Id">@ShoppingList?.Name</a>
-    <button hx-delete="/shopping-list/@ShoppingList?.Id" hx-swap="outerHTML" hx-target="closest article">DELETE</button>
-</article>
+<option value="/shopping-list/@ShoppingList.Id" selected="@IsSelected">@ShoppingList.Name</option>
 
 @code {
-    [Parameter] public ShoppingList? ShoppingList { get; set; }
-    [Parameter] public string? Id { get; set; }
-    private string? ArticleId { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        ArticleId = Id ?? ShoppingList?.Id.ToString();
-    }
+    [Parameter] public required ShoppingList ShoppingList { get; set; }
+    [Parameter] public required bool IsSelected { get; set; }
 }
