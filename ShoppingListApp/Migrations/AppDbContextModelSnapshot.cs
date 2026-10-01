@@ -44,8 +44,8 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("IsPurchased")
-                        .HasColumnType("boolean");
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ItemId")
                         .HasColumnType("uuid");
@@ -58,8 +58,7 @@ namespace ShoppingListApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId")
-                        .IsUnique();
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("SectionId");
 
@@ -108,8 +107,8 @@ namespace ShoppingListApp.Migrations
             modelBuilder.Entity("ShoppingListApp.Entities.ListItem", b =>
                 {
                     b.HasOne("ShoppingListApp.Entities.Item", "Item")
-                        .WithOne("ListItem")
-                        .HasForeignKey("ShoppingListApp.Entities.ListItem", "ItemId")
+                        .WithMany("ListItems")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -143,7 +142,7 @@ namespace ShoppingListApp.Migrations
 
             modelBuilder.Entity("ShoppingListApp.Entities.Item", b =>
                 {
-                    b.Navigation("ListItem");
+                    b.Navigation("ListItems");
                 });
 
             modelBuilder.Entity("ShoppingListApp.Entities.Section", b =>

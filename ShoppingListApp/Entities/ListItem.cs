@@ -9,5 +9,5 @@ public class ListItem
     public Guid? SectionId { get; set; }
     public Item? Item { get; set; }
     public Guid ItemId { get; set; }
-    public bool IsPurchased { get; set; } // TODO this attribute doesn't make a lot of sense
+    public int Count { get; set; }
 }

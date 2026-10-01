@@ -16,8 +16,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         
         modelBuilder.Entity<ListItem>(entity =>
         {
-            entity.HasOne(li => li.Item).WithOne(i => i.ListItem)
-                .HasForeignKey<ListItem>(li => li.ItemId);
+            entity.HasOne(li => li.Item)
+                .WithMany(i => i.ListItems)
+                .HasForeignKey(li => li.ItemId);
             entity
                 .HasOne(li => li.ShoppingList)
                 .WithMany(sl => sl.ListItems)

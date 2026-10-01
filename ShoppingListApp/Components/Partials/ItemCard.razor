@@ -18,7 +18,7 @@
 
 <div class="item-card">
     <p>@Item?.Item?.Name</p>
-    <p>@Item?.IsPurchased</p>
+    <p>@Item?.Count</p>
     <button onclick="">COLLECTED</button>
     <button hx-delete="/shopping-list/@ShoppingListId/item/@Item?.Id" 
             hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
