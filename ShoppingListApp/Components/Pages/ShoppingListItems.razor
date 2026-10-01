@@ -5,9 +5,17 @@
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
 
-<PageTitle>Shopping List @Id</PageTitle>
+<PageTitle>@ShoppingList?.Name</PageTitle>
 
-<h1>Shopping List @Id</h1>
+<h1>@ShoppingList?.Name</h1>
+
+<select onchange="window.location = this.value">
+    <option value="/shopping-list/">-- Select a Shopping List --</option>
+    @foreach (var shoppingList in AllShoppingLists)
+    {
+        <option value="/shopping-list/@shoppingList.Id" selected="@(shoppingList.Id == ShoppingList?.Id)">@shoppingList.Name</option>
+    }
+</select>
 
 <form method="post" @formname="create-section"
       hx-post="/shopping-list/@Id/section" hx-swap="append" hx-target="#sections"
@@ -33,12 +41,15 @@
 @code {
     [Parameter] public Guid Id { get; set; }
     private ShoppingList? ShoppingList { get; set; }
+    private List<ShoppingList> AllShoppingLists { get; set; } = [];
     private List<ListItem> ItemsWithoutSection { get; set; } = [];
 
     protected override async Task OnParametersSetAsync()
     {
         await using var db = await DbFactory.CreateDbContextAsync();
 
+        AllShoppingLists = await db.ShoppingList.ToListAsync();
+        
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections)
             .Include(sl => sl.ListItems)
