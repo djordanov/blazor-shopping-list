@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ShoppingListApp.Components.Partials;
 using ShoppingListApp.Data;
 using ShoppingListApp.Entities;
+// ReSharper disable RedundantAnonymousTypePropertyName
 
 namespace ShoppingListApp.Extensions;
 
@@ -155,6 +156,38 @@ public static class WebApplicationExtensions
                 // one could argue for 204 NoContent instead of 200 Ok
                 // however, this is primarily for HTMX and HTMX ignores 204 NoContent
                 return Results.Ok(); 
+            });
+            
+            app.MapPatch("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid itemId) =>
+            {
+                var db = await dbFactory.CreateDbContextAsync();
+                var item = await db.Item.FindAsync(itemId);
+                if (item is null || item.ShoppingListId != shoppingListId)
+                {
+                    return Results.NotFound();
+                }
+
+                var form = await httpContext.Request.ReadFormAsync();
+                if (form.TryGetValue("Item.Name", out var rawName))
+                {
+                    item.Name = rawName.ToString();
+                }
+                if (form.TryGetValue("Item.Count", out var rawCount) && int.TryParse(rawCount, out var count))
+                {
+                    item.Count = count;
+                }
+                if (form.TryGetValue("Item.IsCollected", out var rawIsCollected) && bool.TryParse(rawIsCollected, out var isCollected))
+                {
+                    item.IsCollected = isCollected;
+                }
+                await db.SaveChangesAsync();
+                
+                return new RazorComponentResult<ItemCard>(new
+                {
+                    ShoppingListId = shoppingListId,
+                    SectionId = item.SectionId,
+                    Item = item
+                });
             });
         
             return app;

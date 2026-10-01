@@ -13,16 +13,21 @@
         <button type="submit">SUBMIT</button>
         <AntiforgeryToken></AntiforgeryToken>
     </form>
-    return;
 }
-
-<div class="item-card">
-    <p>@Item?.Name</p>
-    <p>@Item?.Count</p>
-    <button onclick="">COLLECTED</button>
-    <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item?.Id" 
-            hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
-</div>
+else
+{
+    <div class="item-card">
+        <input type="text" name="Item.Name" value="@Item.Name"
+            hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none" hx-trigger="change delay:500ms" />
+        <input type="number" name="Item.Count" value="@Item.Count"
+            hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none" />
+        @* ReSharper disable once Html.AttributeValueNotResolved *@
+        <input role="switch" type="checkbox" checked="@Item.IsCollected" hx-vals="js:{'Item.IsCollected': event.target.checked}"
+            hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none" />
+        <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" 
+                hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
+    </div>   
+}
 
 @code {
     [Parameter] public Guid ShoppingListId { get; set; }
