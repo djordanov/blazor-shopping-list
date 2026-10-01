@@ -51,7 +51,7 @@ namespace ShoppingListApp.Migrations
 
                     b.HasIndex("ShoppingListId");
 
-                    b.ToTable("ListItem");
+                    b.ToTable("Item");
                 });
 
             modelBuilder.Entity("ShoppingListApp.Entities.Section", b =>

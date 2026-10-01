@@ -15,7 +15,7 @@
 3. Delete: Delete button → DELETE to /shopping-list/<id> → 204 No Content
 4. Edit: Edit button → turns row editable?
 
-### ListItems
+### Items
 
 URL: /shopping-list/<id> displays both sections and items
 

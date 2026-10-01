@@ -123,33 +123,33 @@ public static class WebApplicationExtensions
                     return Results.BadRequest();
                 }
                 
-                var listItem = new Item
+                var item = new Item
                 {
                     ShoppingListId = shoppingListId,
                     SectionId = sectionId,
                     Name = name
                 };
     
-                db.ListItem.Add(listItem);
+                db.Item.Add(item);
                 await db.SaveChangesAsync();
                 return new RazorComponentResult<ItemCard>(new
                 {
                     ShoppingListId = shoppingListId,
                     SectionId = sectionId,
-                    Item = listItem
+                    Item = item
                 });
             });
             
             app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
-                var item = await db.ListItem.FindAsync(itemId);
+                var item = await db.Item.FindAsync(itemId);
                 if (item is null || item.ShoppingListId != shoppingListId)
                 {
                     return Results.NotFound();
                 }
 
-                db.ListItem.Remove(item);
+                db.Item.Remove(item);
                 await db.SaveChangesAsync();
     
                 // one could argue for 204 NoContent instead of 200 Ok
