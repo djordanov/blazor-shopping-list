@@ -17,7 +17,7 @@
 }
 
 <div class="item-card">
-    <p>@Item?.Item?.Name</p>
+    <p>@Item?.Name</p>
     <p>@Item?.Count</p>
     <button onclick="">COLLECTED</button>
     <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item?.Id" 
@@ -27,5 +27,5 @@
 @code {
     [Parameter] public Guid ShoppingListId { get; set; }
     [Parameter] public Guid? SectionId { get; set; }
-    [Parameter] public ListItem? Item { get; set; }    
+    [Parameter] public Item? Item { get; set; }    
 }

@@ -8,5 +8,5 @@ public class Section
     [StringLength(64)] public required string Name { get; set; }
     public ShoppingList? ShoppingList { get; set; }
     public required Guid ShoppingListId { get; set; }
-    public List<ListItem> ListItems { get; set; } = []; 
+    public List<Item> ListItems { get; set; } = []; 
 }

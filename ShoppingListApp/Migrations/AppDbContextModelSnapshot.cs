@@ -28,27 +28,16 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Item");
-                });
-
-            modelBuilder.Entity("ShoppingListApp.Entities.ListItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("IsCollected")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("SectionId")
                         .HasColumnType("uuid");
@@ -57,8 +46,6 @@ namespace ShoppingListApp.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("SectionId");
 
@@ -104,14 +91,8 @@ namespace ShoppingListApp.Migrations
                     b.ToTable("ShoppingList");
                 });
 
-            modelBuilder.Entity("ShoppingListApp.Entities.ListItem", b =>
+            modelBuilder.Entity("ShoppingListApp.Entities.Item", b =>
                 {
-                    b.HasOne("ShoppingListApp.Entities.Item", "Item")
-                        .WithMany("ListItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ShoppingListApp.Entities.Section", "Section")
                         .WithMany("ListItems")
                         .HasForeignKey("SectionId");
@@ -121,8 +102,6 @@ namespace ShoppingListApp.Migrations
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Item");
 
                     b.Navigation("Section");
 
@@ -138,11 +117,6 @@ namespace ShoppingListApp.Migrations
                         .IsRequired();
 
                     b.Navigation("ShoppingList");
-                });
-
-            modelBuilder.Entity("ShoppingListApp.Entities.Item", b =>
-                {
-                    b.Navigation("ListItems");
                 });
 
             modelBuilder.Entity("ShoppingListApp.Entities.Section", b =>

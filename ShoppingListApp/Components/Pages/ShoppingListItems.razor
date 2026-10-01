@@ -64,7 +64,7 @@
     [Parameter] public Guid? Id { get; set; }
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
-    private List<ListItem> ItemsWithoutSection { get; set; } = [];
+    private List<Item> ItemsWithoutSection { get; set; } = [];
 
     protected override async Task OnParametersSetAsync()
     {
@@ -75,7 +75,6 @@
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections)
             .Include(sl => sl.ListItems)
-            .ThenInclude(i => i.Item)
             .FirstOrDefaultAsync(sl => sl.Id == Id);
 
         ItemsWithoutSection = (ShoppingList?.ListItems ?? []).Where(i => i.SectionId == null).ToList();

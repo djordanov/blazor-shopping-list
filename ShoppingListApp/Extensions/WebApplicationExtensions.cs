@@ -83,7 +83,7 @@ public static class WebApplicationExtensions
                 {
                     ShoppingListId = shoppingListId,
                     Section = section,
-                    Items = new List<ListItem>()
+                    Items = new List<Item>()
                 });
             });
             
@@ -122,22 +122,12 @@ public static class WebApplicationExtensions
                 {
                     return Results.BadRequest();
                 }
-
-                var item = await db.Item.FirstOrDefaultAsync(i => i.Name == name);
-                if (item is null)
-                {
-                    item = new Item
-                    {
-                        Name = name
-                    };
-                    db.Add(item);
-                }
-    
-                var listItem = new ListItem
+                
+                var listItem = new Item
                 {
                     ShoppingListId = shoppingListId,
                     SectionId = sectionId,
-                    Item = item
+                    Name = name
                 };
     
                 db.ListItem.Add(listItem);
