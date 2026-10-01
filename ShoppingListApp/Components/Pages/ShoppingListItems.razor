@@ -12,19 +12,26 @@
         <option value="/shopping-list/">-- Select a Shopping List --</option>
         @foreach (var shoppingList in AllShoppingLists)
         {
-            <ShoppingListCard ShoppingList="@shoppingList" IsSelected="@(shoppingList == ShoppingList)"></ShoppingListCard>
+            <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList == ShoppingList)"></ShoppingListOption>
         }
     </select>
     
     <form method="post" @formname="create-shopping-list"
           hx-post="/shopping-list" hx-swap="append" hx-target="select"
           hx-on:htmx:after:request="this.reset()">
-        <h3>Add new Shopping List</h3>
+        <span>Add new Shopping List</span>
         <label for="name">Name:</label>
         <input name="name" aria-required="true"/>
         <button type="submit">SUBMIT</button>
         <AntiforgeryToken></AntiforgeryToken>
     </form>
+    
+    @if (ShoppingList is not null)
+    {
+        <button
+            hx-delete="/shopping-list/@ShoppingList?.Id" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
+            hx-on:htmx:after:request="window.location = '/shopping-list'">DELETE</button>
+    }
 </div>
 
 
@@ -40,17 +47,18 @@
 <div id="sections">
     @foreach (var section in ShoppingList?.Sections ?? [])
     {
-        <SectionComponent ShoppingListId="Id" Section="section" Items="section.ListItems"></SectionComponent>
+        <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
     }
 
     @if (ItemsWithoutSection.Any())
     {
-        <SectionComponent ShoppingListId="Id" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>   
+        <SectionComponent ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>
     }
 </div>
 
+
 @code {
-    [Parameter] public Guid Id { get; set; }
+    [Parameter] public Guid? Id { get; set; }
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
     private List<ListItem> ItemsWithoutSection { get; set; } = [];

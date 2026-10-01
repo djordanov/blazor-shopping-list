@@ -14,6 +14,30 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapShoppingListEndpoints()
         {
+            app.MapPost("/shopping-list/", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
+            {
+                var db = await dbFactory.CreateDbContextAsync();
+                var form = await httpContext.Request.ReadFormAsync();
+                var name = form["name"].ToString();
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return Results.BadRequest();
+                }
+
+                var shoppingList = new ShoppingList
+                {
+                    Name = name
+                };
+    
+                db.ShoppingList.Add(shoppingList);
+                await db.SaveChangesAsync();
+                return new RazorComponentResult<ShoppingListOption>(new
+                {
+                    ShoppingList = shoppingList,
+                    IsSelected = false
+                });
+            });
+            
             app.MapDelete("/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
