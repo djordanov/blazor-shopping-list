@@ -19,7 +19,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(o
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
-app.MapGet("/", () => Results.Redirect("/shopping-list", true));
+app.MapGet("/", () => Results.Redirect("/shopping-list"));
 app.MapShoppingListEndpoints();
 app.MapSectionEndpoints();
 app.MapItemEndpoints();

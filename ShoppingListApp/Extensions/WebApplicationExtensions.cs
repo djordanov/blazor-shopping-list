@@ -14,7 +14,7 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapShoppingListEndpoints()
         {
-            app.MapPost("/shopping-list/", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
+            app.MapPost("/shopping-list", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
@@ -115,7 +115,9 @@ public static class WebApplicationExtensions
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
                 var name = form["name"].ToString();
-                var sectionId = new Guid(form["sectionId"].ToString());
+                var sectionId = Guid.TryParse(form["sectionId"], out var parsedSectionId)
+                    ? parsedSectionId
+                    : (Guid?)null;
                 if (string.IsNullOrWhiteSpace(name))
                 {
                     return Results.BadRequest();

@@ -13,7 +13,7 @@
         <option value="/shopping-list/">-- Select a Shopping List --</option>
         @foreach (var shoppingList in AllShoppingLists)
         {
-            <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList == ShoppingList)"></ShoppingListOption>
+            <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList.Id == Id)"></ShoppingListOption>
         }
     </select>
     
