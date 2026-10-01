@@ -1,3 +1,4 @@
+@page "/shopping-list"
 @page "/shopping-list/{id:guid}"
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Components.Partials
@@ -34,15 +35,17 @@
     }
 </div>
 
-
-<form method="post" @formname="create-section"
-      hx-post="/shopping-list/@Id/section" hx-swap="append" hx-target="#sections"
-      hx-on:htmx:after:request="this.reset()">
-    <label for="name">Section Name:</label>
-    <input id="name" name="name" aria-required="true"/>
-    <button type="submit">SUBMIT</button>
-    <AntiforgeryToken></AntiforgeryToken>
-</form>
+@if(ShoppingList is not null)
+{
+    <form method="post" @formname="create-section"
+          hx-post="/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
+          hx-on:htmx:after:request="this.reset()">
+        <label for="name">Section Name:</label>
+        <input id="name" name="name" aria-required="true"/>
+        <button type="submit">SUBMIT</button>
+        <AntiforgeryToken></AntiforgeryToken>
+    </form>
+}
 
 <div id="sections">
     @foreach (var section in ShoppingList?.Sections ?? [])
