@@ -18,7 +18,7 @@
     </select>
     
     <form method="post" @formname="create-shopping-list"
-          hx-post="/shopping-list" hx-swap="append" hx-target="select"
+          hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
           hx-on:htmx:after:request="this.reset()">
         <span>Add new Shopping List</span>
         <label for="name">Name:</label>
@@ -30,7 +30,7 @@
     @if (ShoppingList is not null)
     {
         <button
-            hx-delete="/shopping-list/@ShoppingList?.Id" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
+            hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
             hx-on:htmx:after:request="window.location = '/shopping-list'">DELETE</button>
     }
 </div>
@@ -38,7 +38,7 @@
 @if(ShoppingList is not null)
 {
     <form method="post" @formname="create-section"
-          hx-post="/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
+          hx-post="/htmx/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
           hx-on:htmx:after:request="this.reset()">
         <label for="name">Section Name:</label>
         <input id="name" name="name" aria-required="true"/>

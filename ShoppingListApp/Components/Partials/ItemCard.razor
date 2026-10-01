@@ -3,7 +3,7 @@
 @if (Item is null)
 {
     <form method="post" @formname="create-item"
-          hx-post="/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="closest article"
+          hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="closest article"
           hx-on:htmx:after:request="this.reset()">
         <div>
             <label for="name">Item Name:</label>
@@ -20,7 +20,7 @@
     <p>@Item?.Item?.Name</p>
     <p>@Item?.Count</p>
     <button onclick="">COLLECTED</button>
-    <button hx-delete="/shopping-list/@ShoppingListId/item/@Item?.Id" 
+    <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item?.Id" 
             hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
 </div>
 

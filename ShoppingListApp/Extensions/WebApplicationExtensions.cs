@@ -14,7 +14,7 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapShoppingListEndpoints()
         {
-            app.MapPost("/shopping-list", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
+            app.MapPost("/htmx/shopping-list", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
@@ -38,7 +38,7 @@ public static class WebApplicationExtensions
                 });
             });
             
-            app.MapDelete("/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
+            app.MapDelete("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var shoppingList = await db.ShoppingList.FindAsync(id);
@@ -61,7 +61,7 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapSectionEndpoints()
         {
-            app.MapPost("/shopping-list/{shoppingListId:Guid}/section", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
+            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
@@ -87,7 +87,7 @@ public static class WebApplicationExtensions
                 });
             });
             
-            app.MapDelete("/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
+            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var section = await db.Section.FindAsync(sectionId);
@@ -110,7 +110,7 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapItemEndpoints()
         {
-            app.MapPost("/shopping-list/{shoppingListId:Guid}/item", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
+            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/item", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
@@ -150,7 +150,7 @@ public static class WebApplicationExtensions
                 });
             });
             
-            app.MapDelete("/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
+            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var item = await db.ListItem.FindAsync(itemId);
