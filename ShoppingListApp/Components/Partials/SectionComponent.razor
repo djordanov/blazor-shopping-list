@@ -1,19 +1,21 @@
 @using ShoppingListApp.Entities
 
-<article>
+<article class="section">
     @if (Section is not null)
     {   
         <header>
-            <h3>@Section.Name</h3>
+            <input type="text" name="Section.Name" value="@Section.Name"
+                   hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Section.Id"
+                   hx-swap="none" hx-trigger="change delay:500ms"/>
             <button hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" 
                 hx-swap="outerHTML" hx-target="closest article">DELETE</button>
         </header>
     }
     @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
     {
-        <ItemCard ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCard>
+        <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardPartial>
     }
-    <ItemCard ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCard>
+    <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardPartial>
 </article>
 
 @code {

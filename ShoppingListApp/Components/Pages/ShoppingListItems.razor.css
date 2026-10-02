@@ -1,0 +1,20 @@
+#shopping-list-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#shopping-list-header > div {
+    display: flex;
+}
+
+#create-shopping-list-form {
+    display: flex;
+}
+
+#shopping-list-header > select {
+    flex-grow: 1;
+}
+
+#create-section-form {
+    display: flex;
+}

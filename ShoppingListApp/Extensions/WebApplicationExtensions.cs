@@ -62,7 +62,8 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapSectionEndpoints()
         {
-            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
+            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section",
+                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
@@ -88,7 +89,8 @@ public static class WebApplicationExtensions
                 });
             });
             
-            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
+            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}",
+                async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var section = await db.Section.FindAsync(sectionId);
@@ -105,6 +107,26 @@ public static class WebApplicationExtensions
                 return Results.Ok(); 
             });
         
+            app.MapPatch("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}",
+                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid sectionId) =>
+            {
+                var db = await dbFactory.CreateDbContextAsync();
+                var section = await db.Section.FindAsync(sectionId);
+                if (section is null || section.ShoppingListId != shoppingListId)
+                {
+                    return Results.NotFound();
+                }
+
+                var form = await httpContext.Request.ReadFormAsync();
+                if (form.TryGetValue("Section.Name", out var rawName))
+                {
+                    section.Name = rawName.ToString();
+                }
+                await db.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+            
             return app;
         }
         
@@ -133,7 +155,7 @@ public static class WebApplicationExtensions
     
                 db.Item.Add(item);
                 await db.SaveChangesAsync();
-                return new RazorComponentResult<ItemCard>(new
+                return new RazorComponentResult<ItemCardPartial>(new
                 {
                     ShoppingListId = shoppingListId,
                     SectionId = sectionId,
@@ -181,13 +203,8 @@ public static class WebApplicationExtensions
                     item.IsCollected = isCollected;
                 }
                 await db.SaveChangesAsync();
-                
-                return new RazorComponentResult<ItemCard>(new
-                {
-                    ShoppingListId = shoppingListId,
-                    SectionId = item.SectionId,
-                    Item = item
-                });
+
+                return Results.Ok();
             });
         
             return app;
