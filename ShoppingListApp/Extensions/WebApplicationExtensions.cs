@@ -133,14 +133,10 @@ public static class WebApplicationExtensions
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
-                var name = form["name"].ToString();
+                var name = form.TryGetValue("Section.Name", out var rawName) ? rawName.ToString() : "";
                 var sectionId = Guid.TryParse(form["sectionId"], out var parsedSectionId)
                     ? parsedSectionId
                     : (Guid?)null;
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return Results.BadRequest();
-                }
                 
                 var item = new Item
                 {

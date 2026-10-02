@@ -11,10 +11,12 @@
                 hx-swap="outerHTML" hx-target="closest article" aria-label="Delete section"><i class="ti ti-trash"></i></button>
         </header>
     }
-    @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
-    {
-        <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardPartial>
-    }
+    <div id="section-@Section?.Id-items">
+        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
+        {
+            <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardPartial>
+        }
+    </div>
     <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardPartial>
 </article>
 
