@@ -12,23 +12,13 @@ namespace ShoppingListApp.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Item",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Item", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ShoppingList",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,7 +31,9 @@ namespace ShoppingListApp.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    ShoppingListId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ShoppingListId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,32 +47,28 @@ namespace ShoppingListApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListItem",
+                name: "Item",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ShoppingListId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SectionId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsPurchased = table.Column<bool>(type: "boolean", nullable: false)
+                    SectionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Count = table.Column<int>(type: "integer", nullable: false),
+                    IsCollected = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListItem", x => x.Id);
+                    table.PrimaryKey("PK_Item", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListItem_Item_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Item",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ListItem_Section_SectionId",
+                        name: "FK_Item_Section_SectionId",
                         column: x => x.SectionId,
                         principalTable: "Section",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ListItem_ShoppingList_ShoppingListId",
+                        name: "FK_Item_ShoppingList_ShoppingListId",
                         column: x => x.ShoppingListId,
                         principalTable: "ShoppingList",
                         principalColumn: "Id",
@@ -88,19 +76,13 @@ namespace ShoppingListApp.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListItem_ItemId",
-                table: "ListItem",
-                column: "ItemId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ListItem_SectionId",
-                table: "ListItem",
+                name: "IX_Item_SectionId",
+                table: "Item",
                 column: "SectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListItem_ShoppingListId",
-                table: "ListItem",
+                name: "IX_Item_ShoppingListId",
+                table: "Item",
                 column: "ShoppingListId");
 
             migrationBuilder.CreateIndex(
@@ -112,9 +94,6 @@ namespace ShoppingListApp.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ListItem");
-
             migrationBuilder.DropTable(
                 name: "Item");
 

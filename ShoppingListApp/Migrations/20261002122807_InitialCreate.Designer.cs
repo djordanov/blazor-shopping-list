@@ -12,7 +12,7 @@ using ShoppingListApp.Data;
 namespace ShoppingListApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260929070403_InitialCreate")]
+    [Migration("20261002122807_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,44 +31,36 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.ToTable("Item");
-                });
-
-            modelBuilder.Entity("ShoppingListApp.Entities.ListItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsPurchased")
+                    b.Property<bool>("IsCollected")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.Property<Guid>("SectionId")
+                    b.Property<Guid?>("SectionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasIndex("ItemId")
-                        .IsUnique();
+                    b.HasKey("Id");
 
                     b.HasIndex("SectionId");
 
                     b.HasIndex("ShoppingListId");
 
-                    b.ToTable("ListItem");
+                    b.ToTable("Item");
                 });
 
             modelBuilder.Entity("ShoppingListApp.Entities.Section", b =>
@@ -77,6 +69,9 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -84,6 +79,9 @@ namespace ShoppingListApp.Migrations
 
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -98,37 +96,33 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("ShoppingList");
                 });
 
-            modelBuilder.Entity("ShoppingListApp.Entities.ListItem", b =>
+            modelBuilder.Entity("ShoppingListApp.Entities.Item", b =>
                 {
-                    b.HasOne("ShoppingListApp.Entities.Item", "Item")
-                        .WithOne("ListItem")
-                        .HasForeignKey("ShoppingListApp.Entities.ListItem", "ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ShoppingListApp.Entities.Section", "Section")
                         .WithMany("ListItems")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SectionId");
 
                     b.HasOne("ShoppingListApp.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ListItems")
                         .HasForeignKey("ShoppingListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Item");
 
                     b.Navigation("Section");
 
@@ -144,11 +138,6 @@ namespace ShoppingListApp.Migrations
                         .IsRequired();
 
                     b.Navigation("ShoppingList");
-                });
-
-            modelBuilder.Entity("ShoppingListApp.Entities.Item", b =>
-                {
-                    b.Navigation("ListItem");
                 });
 
             modelBuilder.Entity("ShoppingListApp.Entities.Section", b =>
