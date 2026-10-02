@@ -1,6 +1,6 @@
 @using ShoppingListApp.Entities
 
-<option value="/shopping-list/@ShoppingList.Id" selected="@IsSelected">@ShoppingList.Name</option>
+<option value="/shopping-list/@ShoppingList.Id" selected="@IsSelected"><h1>@ShoppingList.Name</h1></option>
 
 @code {
     [Parameter] public required ShoppingList ShoppingList { get; set; }

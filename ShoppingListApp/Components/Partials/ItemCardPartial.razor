@@ -7,7 +7,7 @@
           hx-on:htmx:after:request="this.reset()">
         <input class="item-name" name="name" placeholder="Add New" aria-required="true"/>
         <input type="hidden" name="sectionId" value="@SectionId" />
-        <button type="submit">SUBMIT</button>
+        <button type="submit" aria-label="Add item"><i class="ti ti-plus"></i></button>
         <AntiforgeryToken></AntiforgeryToken>
     </form>
 }
@@ -25,7 +25,7 @@ else
             <input role="switch" type="checkbox" checked="@Item.IsCollected" hx-vals="js:{'Item.IsCollected': event.target.checked}"
                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"/>
             <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-                    hx-swap="outerHTML" hx-target="closest .item-card">DELETE</button>
+                    hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item"><i class="ti ti-trash"></i></button>
         </div>
     </div>   
 }

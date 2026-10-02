@@ -11,7 +11,7 @@
 
 <div id="shopping-list-header">
     <select onchange="window.location = this.value">
-        <option value="/shopping-list/">-- Select a Shopping List --</option>
+        <option value="/shopping-list/"><h1>-- Select a Shopping List --</h1></option>
         @foreach (var shoppingList in AllShoppingLists)
         {
             <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList.Id == Id)"></ShoppingListOption>
@@ -23,7 +23,7 @@
               hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
               hx-on:htmx:after:request="this.reset()">
             <input name="name" placeholder="Add New" aria-required="true"/>
-            <button type="submit">SUBMIT</button>
+            <button type="submit" aria-label="Add shopping list"><i class="ti ti-plus"></i></button>
             <AntiforgeryToken></AntiforgeryToken>
         </form>
         
@@ -31,7 +31,7 @@
         {
             <button
                 hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
-                hx-on:htmx:after:request="window.location = '/shopping-list'">DELETE</button>
+                hx-on:htmx:after:request="window.location = '/shopping-list'"><i class="ti ti-trash"></i></button>
         }
     </div>
 </div>
@@ -54,7 +54,7 @@
           hx-post="/htmx/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
           hx-on:htmx:after:request="this.reset()">
         <input id="name" name="name" placeholder="Add Section" aria-required="true"/>
-        <button type="submit">SUBMIT</button>
+        <button type="submit" aria-label="Add section"><i class="ti ti-plus"></i></button>
         <AntiforgeryToken></AntiforgeryToken>
     </form>
 }

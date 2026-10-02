@@ -8,7 +8,7 @@
                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Section.Id"
                    hx-swap="none" hx-trigger="change delay:500ms"/>
             <button hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" 
-                hx-swap="outerHTML" hx-target="closest article">DELETE</button>
+                hx-swap="outerHTML" hx-target="closest article" aria-label="Delete section"><i class="ti ti-trash"></i></button>
         </header>
     }
     @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
