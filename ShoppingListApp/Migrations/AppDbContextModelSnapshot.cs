@@ -48,6 +48,9 @@ namespace ShoppingListApp.Migrations
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -76,6 +79,9 @@ namespace ShoppingListApp.Migrations
 
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");

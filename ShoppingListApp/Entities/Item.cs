@@ -11,4 +11,5 @@ public class Item : AEntity
     [MaxLength(256)] public required string Name { get; set; }
     public int Count { get; set; } = 1;
     public bool IsCollected { get; set; }
+    public int SortOrder { get; set; } = int.MaxValue; // start new items at the bottom
 }
