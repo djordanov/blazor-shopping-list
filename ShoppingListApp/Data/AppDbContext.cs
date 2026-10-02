@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ShoppingListApp.Entities;
 
 namespace ShoppingListApp.Data;
@@ -29,5 +30,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasMany(sl => sl.Sections)
             .WithOne(s => s.ShoppingList)
             .HasForeignKey(s => s.ShoppingListId);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        var now = DateTimeOffset.UtcNow;
+        
+        foreach (var entityEntry in ChangeTracker.Entries<AEntity>())
+        {
+            switch (entityEntry.State)
+            {
+                case EntityState.Added:
+                    entityEntry.Entity.CreatedAt = now;
+                    entityEntry.Entity.UpdatedAt = now;
+                    break;
+                case EntityState.Modified:
+                    entityEntry.Entity.UpdatedAt = now;
+                    break;
+            }
+        }
+        
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

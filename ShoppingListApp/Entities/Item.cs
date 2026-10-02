@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingListApp.Entities;
 
-public class Item
+public class Item : AEntity
 {
-    public Guid Id { get; init; }
     public ShoppingList? ShoppingList { get; set; }
     public Guid ShoppingListId { get; set; }
     public Section? Section { get; set; }

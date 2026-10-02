@@ -31,6 +31,9 @@ namespace ShoppingListApp.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsCollected")
                         .HasColumnType("boolean");
 
@@ -44,6 +47,9 @@ namespace ShoppingListApp.Migrations
 
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -60,6 +66,9 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -67,6 +76,9 @@ namespace ShoppingListApp.Migrations
 
                     b.Property<Guid>("ShoppingListId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -81,10 +93,16 @@ namespace ShoppingListApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
