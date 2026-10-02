@@ -67,12 +67,8 @@ public static class WebApplicationExtensions
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
-                var name = form["name"].ToString();
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return Results.BadRequest();
-                }
-
+                var name = form.TryGetValue("Section.Name", out var rawName) ? rawName.ToString() : "";
+                
                 var section = new Section
                 {
                     ShoppingListId = shoppingListId,

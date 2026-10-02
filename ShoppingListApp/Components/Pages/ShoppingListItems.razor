@@ -50,13 +50,9 @@
         }
     </div>
 
-    <form id="create-section-form" method="post" @formname="create-section"
-          hx-post="/htmx/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
-          hx-on:htmx:after:request="this.reset()">
-        <input id="name" name="name" placeholder="Add Section" aria-required="true"/>
-        <button type="submit" aria-label="Add section"><i class="ti ti-plus"></i></button>
-        <AntiforgeryToken></AntiforgeryToken>
-    </form>
+    <button type="submit" aria-label="Add section"
+        hx-post="/htmx/shopping-list/@ShoppingList.Id/section" hx-swap="append" hx-target="#sections"
+        ><i class="ti ti-plus"></i></button>
 }
 
 
