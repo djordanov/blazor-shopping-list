@@ -8,10 +8,14 @@ form {
     justify-content: space-between;
 }
 
-.item-name {
+.item-card-left {
     flex-grow: 1;
 }
 
 .item-card > div {
     display: flex;
+}
+
+.item-card-left.is-collected > .item-name{
+    text-decoration: line-through;
 }
