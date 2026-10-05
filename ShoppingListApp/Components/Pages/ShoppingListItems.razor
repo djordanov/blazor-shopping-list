@@ -60,17 +60,29 @@
     </form>
 </div>
 
+<div id="shopping-list-stage-selectors">
+    <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=note">
+        <i class="ti ti-pencil"></i> NOTE
+    </a>
+    <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=shop">
+        <i class="ti ti-shopping-cart"></i> SHOP
+    </a>
+    <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=pay">
+        <i class="ti ti-credit-card"></i> BUY
+    </a>
+</div>
+
 @if(ShoppingList is not null)
 {
     <div id="sections">
         @foreach (var section in ShoppingList?.Sections ?? [])
         {
-            <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
+            <SectionComponent Stage="Stage" ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
         }
 
         @if (ItemsWithoutSection.Any())
         {
-            <SectionComponent ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>
+            <SectionComponent Stage="Stage" ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>
         }
     </div>
 
@@ -86,6 +98,7 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
     private List<Item> ItemsWithoutSection { get; set; } = [];
+    [SupplyParameterFromQuery] public string Stage { get; set; } = "note";
 
     protected override async Task OnParametersSetAsync()
     {

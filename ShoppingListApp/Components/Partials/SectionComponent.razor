@@ -14,14 +14,15 @@
     <div id="section-@Section?.Id-items">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
-            <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardPartial>
+            <ItemCardComponent Stage="Stage" ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardComponent>
         }
     </div>
-    <ItemCardPartial ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardPartial>
+    <ItemCardComponent Stage="Stage" ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardComponent>
 </article>
 
 @code {
     [Parameter] public Guid ShoppingListId { get; set; }
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
+    [SupplyParameterFromQuery] public string Stage { get; set; } = "note";
 }

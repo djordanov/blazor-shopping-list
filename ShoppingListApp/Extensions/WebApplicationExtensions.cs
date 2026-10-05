@@ -167,7 +167,7 @@ public static class WebApplicationExtensions
     
                 db.Item.Add(item);
                 await db.SaveChangesAsync();
-                return new RazorComponentResult<ItemCardPartial>(new
+                return new RazorComponentResult<ItemCardComponent>(new
                 {
                     ShoppingListId = shoppingListId,
                     SectionId = sectionId,
