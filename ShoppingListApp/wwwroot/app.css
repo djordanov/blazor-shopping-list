@@ -2,7 +2,7 @@
     display: none;
 }
 
-.is-default-mode .show-on-default {
+[data-mode="default"] .show-on-default {
     display: revert;
 }
 
@@ -10,7 +10,7 @@
     display: none;
 }
 
-.is-edit-mode .show-on-edit {
+[data-mode="edit"] .show-on-edit {
     display: revert;
 }
 
@@ -18,6 +18,6 @@
     display: none;
 }
 
-.is-add-mode .show-on-add {
+[data-mode="add"] .show-on-add {
     display: revert;
 }

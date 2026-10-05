@@ -1,8 +1,14 @@
 @using ShoppingListApp.Entities
 
+@if (ShoppingList is null)
+{
+    <option value="/shopping-list/" selected="@IsSelected">-- Select a Shopping List --</option>
+    return;
+}
+
 <option value="/shopping-list/@ShoppingList.Id" selected="@IsSelected">@ShoppingList.Name</option>
 
 @code {
-    [Parameter] public required ShoppingList ShoppingList { get; set; }
+    [Parameter] public ShoppingList? ShoppingList { get; set; }
     [Parameter] public required bool IsSelected { get; set; }
 }

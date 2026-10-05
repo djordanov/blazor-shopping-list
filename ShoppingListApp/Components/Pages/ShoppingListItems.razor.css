@@ -4,23 +4,20 @@
     gap: 1rem;
 }
 
-#shopping-list-header > div {
-    display: flex;
-}
-
-#shopping-list-form {
-    display: flex;
-    gap: 0.5rem;
-}
-
 #shopping-list-header > select {
     flex-grow: 1;
 }
 
-#shopping-list-form input {
-    flex-grow: 1;
+#shopping-list-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
-#create-section-form {
+#shopping-list-actions > form {
     display: flex;
+    gap: 0.5rem;
+}
+
+#shopping-list-actions > form > input {
+    flex-grow: 1;
 }
