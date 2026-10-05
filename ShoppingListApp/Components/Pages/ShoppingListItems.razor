@@ -18,52 +18,46 @@
         }
     </select>
     
-    @{
-        var editDisabled = ShoppingList is null ? "disabled" : "";
-    }
+    <!-- controls for default mode -->
+    <button type="button" class="show-on-default" disabled="@(ShoppingList is null)"
+            onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
+        <i class="ti ti-edit"></i>
+    </button> 
+    <button type="button" class="show-on-default" aria-label="Add shopping list"
+            onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
+        <i class="ti ti-plus"></i>
+    </button>
     
-    <div id="shopping-list-actions">
-        <!-- controls for default mode -->
-        <button type="button" class="show-on-default" @editDisabled
-                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
-            <i class="ti ti-edit"></i>
-        </button> 
-        <button type="button" class="show-on-default" aria-label="Add shopping list"
-                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
-            <i class="ti ti-plus"></i>
+    <!-- controls for add mode -->
+    <form id="create-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
+          hx-on:htmx:after:request="this.reset();
+                document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
+        <input class="show-on-add" name="name" placeholder="..." aria-required="true"/>
+        <button type="submit" class="show-on-add">
+            <i class="ti ti-check"></i>
         </button>
-        
-        <!-- controls for add mode -->
-        <form id="create-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
-              hx-on:htmx:after:request="this.reset();
-                    document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
-            <input class="show-on-add" name="name" placeholder="..." aria-required="true"/>
-            <button type="submit" class="show-on-add">
-                <i class="ti ti-check"></i>
-            </button>
-            <button type="reset" class="show-on-add"
-                    onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
-                <i class="ti ti-x"></i>
-            </button>
-        </form>
-        
-        <!-- controls for edit mode -->
-        <form id="edit-shopping-list-form" class="show-on-edit" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
-              hx-on:htmx:after:request="window.location = '/shopping-list/@ShoppingList?.Id'"> <!-- updating the shopping list name inside the select would be a hassle -->
-            <input class="show-on-edit" name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
-            <button type="submit" class="show-on-edit">
-                <i class="ti ti-check"></i>
-            </button>
-            <button type="reset" class="show-on-edit" 
-                    onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
-                <i class="ti ti-x"></i>
-            </button>
-            <button type="button" class="show-on-edit secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
-                    hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-on:htmx:after:request="window.location = '/'">
-                <i class="ti ti-trash"></i>
-            </button>
-        </form>
-    </div>
+        <button type="reset" class="show-on-add"
+                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
+            <i class="ti ti-x"></i>
+        </button>
+    </form>
+    
+    <!-- controls for edit mode -->
+    <form id="edit-shopping-list-form" class="show-on-edit" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
+          hx-on:htmx:after:request="window.location = '/shopping-list/@ShoppingList?.Id'"> <!-- updating the shopping list name inside the select would be a hassle -->
+        <input class="show-on-edit" name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
+        <button type="submit" class="show-on-edit">
+            <i class="ti ti-check"></i>
+        </button>
+        <button type="reset" class="show-on-edit" 
+                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
+            <i class="ti ti-x"></i>
+        </button>
+        <button type="button" class="show-on-edit secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
+                hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-on:htmx:after:request="window.location = '/'">
+            <i class="ti ti-trash"></i>
+        </button>
+    </form>
 </div>
 
 @if(ShoppingList is not null)

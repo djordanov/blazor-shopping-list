@@ -1,23 +1,22 @@
 #shopping-list-header {
     display: flex;
-    justify-content: space-between;
     gap: 1rem;
+}
+
+#shopping-list-header button[type="submit"] {
+    width: revert;
 }
 
 #shopping-list-header > select {
     flex-grow: 1;
 }
 
-#shopping-list-actions {
+#shopping-list-header > form {
+    flex-grow: 1;
     display: flex;
     gap: 0.5rem;
 }
 
-#shopping-list-actions > form {
-    display: flex;
-    gap: 0.5rem;
-}
-
-#shopping-list-actions > form > input {
+#shopping-list-header > form > input {
     flex-grow: 1;
 }
