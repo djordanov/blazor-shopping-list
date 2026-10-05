@@ -141,7 +141,13 @@ public static class WebApplicationExtensions
                 }
                 await db.SaveChangesAsync();
 
-                return Results.Ok();
+                return new RazorComponentResult<SectionComponent>(new
+                {
+                    ShoppingListId = shoppingListId,
+                    Section = section,
+                    Mode = "default",
+                    Items = new List<Item>()
+                });
             });
             
             return app;

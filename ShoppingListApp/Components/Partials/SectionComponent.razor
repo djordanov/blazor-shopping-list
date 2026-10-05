@@ -13,8 +13,7 @@
             </div>
             
             <!-- controls for edit mode -->
-            <form hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="none"
-                    hx-on:htmx:after:request="this.closest('header').setAttribute('data-mode', 'default')">
+            <form hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
                 <input class="show-on-edit" type="text" name="Section.Name" value="@Section.Name"/>
                 <button type="submit" class="show-on-edit">
                     <i class="ti ti-check"></i>
