@@ -1,4 +1,21 @@
-.section > header {
+.section > header > div {
     display: flex;
     gap: 1rem;
+}
+
+.section > header > div > span {
+    flex-grow: 1;
+}
+
+.section > header > form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.section > header > form > input {
+    flex-grow: 1;
+}
+
+.section > header button[type="submit"] {
+    width: revert;
 }

@@ -101,6 +101,7 @@ public static class WebApplicationExtensions
                 {
                     ShoppingListId = shoppingListId,
                     Section = section,
+                    Mode = "edit",
                     Items = new List<Item>()
                 });
             });

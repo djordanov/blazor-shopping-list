@@ -20,3 +20,7 @@
 #shopping-list-header > form > input {
     flex-grow: 1;
 }
+
+#shopping-list-stage-selectors {
+    margin-bottom: 4rem;
+}

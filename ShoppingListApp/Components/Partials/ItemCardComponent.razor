@@ -32,5 +32,6 @@ else
 @code {
     [Parameter] public Guid ShoppingListId { get; set; }
     [Parameter] public Guid? SectionId { get; set; }
-    [Parameter] public Item? Item { get; set; }    
+    [Parameter] public Item? Item { get; set; }
+    [SupplyParameterFromQuery, EditorRequired] public required string Stage { get; set; }
 }

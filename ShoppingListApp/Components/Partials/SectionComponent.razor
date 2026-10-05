@@ -3,26 +3,44 @@
 <article class="section">
     @if (Section is not null)
     {   
-        <header>
-            <input type="text" name="Section.Name" value="@Section.Name"
-                   hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
-                   hx-swap="none" hx-trigger="change delay:500ms"/>
-            <button hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" 
-                hx-swap="outerHTML" hx-target="closest article" aria-label="Delete section"><i class="ti ti-trash"></i></button>
+        <header data-mode="@Mode">
+            <!-- default mode -->
+            <div>
+                <span class="show-on-default">@Section.Name</span>
+                <button type="button" class="show-on-default" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
+                    <i class="ti ti-edit"></i>
+                </button> 
+            </div>
+            
+            <!-- controls for edit mode -->
+            <form hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="none"
+                    hx-on:htmx:after:request="this.closest('header').setAttribute('data-mode', 'default')">
+                <input class="show-on-edit" type="text" name="Section.Name" value="@Section.Name"/>
+                <button type="submit" class="show-on-edit">
+                    <i class="ti ti-check"></i>
+                </button>
+                <button type="reset" class="show-on-edit" onclick="this.closest('header').setAttribute('data-mode', 'default')">
+                    <i class="ti ti-x"></i>
+                </button>
+                <button class="show-on-edit" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
+                        hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section">
+                    <i class="ti ti-trash"></i>
+                </button>
+            </form>
         </header>
     }
     <div id="section-@Section?.Id-items">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
-            <ItemCardComponent Stage="Stage" ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardComponent>
+            <ItemCardComponent ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardComponent>
         }
     </div>
-    <ItemCardComponent Stage="Stage" ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardComponent>
+    <ItemCardComponent ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardComponent>
 </article>
 
 @code {
     [Parameter] public Guid ShoppingListId { get; set; }
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
-    [SupplyParameterFromQuery] public string Stage { get; set; } = "note";
-}
+    [Parameter] public string Mode { get; set; } = "default";
+    [SupplyParameterFromQuery, EditorRequired] public required string Stage { get; set; }}
