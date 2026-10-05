@@ -66,10 +66,11 @@ public static class WebApplicationExtensions
                     }
 
                     var form = await httpContext.Request.ReadFormAsync();
-                    if (form.TryGetValue("name", out var rawName))
+                    if (!form.TryGetValue("name", out var rawName) || string.IsNullOrWhiteSpace(rawName.ToString()))
                     {
-                        shoppingList.Name = rawName.ToString();
+                        return Results.BadRequest();
                     }
+                    shoppingList.Name = rawName.ToString();
                     await db.SaveChangesAsync();
 
                     return Results.Ok();

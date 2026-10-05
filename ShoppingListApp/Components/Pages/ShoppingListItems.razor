@@ -14,7 +14,7 @@
         <option value="/shopping-list/"><h1>-- Select a Shopping List --</h1></option>
         @foreach (var shoppingList in AllShoppingLists)
         {
-            <option value="/shopping-list/@shoppingList.Id" selected="@(shoppingList.Id == Id)"><h1>@shoppingList.Name</h1></option>
+            <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList.Id == Id)"></ShoppingListOption>
         }
     </select>
     
@@ -95,7 +95,7 @@
     {
         await using var db = await DbFactory.CreateDbContextAsync();
 
-        AllShoppingLists = await db.ShoppingList.ToListAsync();
+        AllShoppingLists = await db.ShoppingList.OrderBy(sl => sl.Name).ToListAsync();
         
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections)

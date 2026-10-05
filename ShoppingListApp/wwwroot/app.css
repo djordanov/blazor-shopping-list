@@ -3,7 +3,7 @@
 }
 
 .is-default-mode .show-on-default {
-    display: inherit;
+    display: revert;
 }
 
 .show-on-edit {
@@ -11,7 +11,7 @@
 }
 
 .is-edit-mode .show-on-edit {
-    display: inherit;
+    display: revert;
 }
 
 .show-on-add {
@@ -19,5 +19,5 @@
 }
 
 .is-add-mode .show-on-add {
-    display: inherit;
+    display: revert;
 }
