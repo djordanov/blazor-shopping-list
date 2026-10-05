@@ -1,0 +1,23 @@
+.show-on-default {
+    display: none;
+}
+
+.is-default-mode .show-on-default {
+    display: inherit;
+}
+
+.show-on-edit {
+    display: none;
+}
+
+.is-edit-mode .show-on-edit {
+    display: inherit;
+}
+
+.show-on-add {
+    display: none;
+}
+
+.is-add-mode .show-on-add {
+    display: inherit;
+}

@@ -1,17 +1,23 @@
 #shopping-list-header {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
 }
 
 #shopping-list-header > div {
     display: flex;
 }
 
-#create-shopping-list-form {
+#shopping-list-form {
     display: flex;
+    gap: 0.5rem;
 }
 
 #shopping-list-header > select {
+    flex-grow: 1;
+}
+
+#shopping-list-form > input {
     flex-grow: 1;
 }
 

@@ -55,6 +55,25 @@ public static class WebApplicationExtensions
                 // however, this is primarily for HTMX and HTMX ignores 204 NoContent
                 return Results.Ok(); 
             });
+            
+            app.MapPatch("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
+                {
+                    var db = await dbFactory.CreateDbContextAsync();
+                    var shoppingList = await db.ShoppingList.FindAsync(id);
+                    if (shoppingList is null)
+                    {
+                        return Results.NotFound();
+                    }
+
+                    var form = await httpContext.Request.ReadFormAsync();
+                    if (form.TryGetValue("name", out var rawName))
+                    {
+                        shoppingList.Name = rawName.ToString();
+                    }
+                    await db.SaveChangesAsync();
+
+                    return Results.Ok();
+                });
 
             return app;
         }
