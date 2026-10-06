@@ -1,23 +1,5 @@
-.show-on-default {
-    display: none;
-}
-
-[data-mode="default"] .show-on-default {
-    display: revert;
-}
-
-.show-on-edit {
-    display: none;
-}
-
-[data-mode="edit"] .show-on-edit {
-    display: revert;
-}
-
-.show-on-add {
-    display: none;
-}
-
-[data-mode="add"] .show-on-add {
-    display: revert;
+@media(width < 768px) {
+    button > span, [role="button"] > span {
+        display: none;
+    }
 }

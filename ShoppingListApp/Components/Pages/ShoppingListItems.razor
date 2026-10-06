@@ -10,7 +10,7 @@
 <PageTitle>@ShoppingList?.Name</PageTitle>
 
 <div id="shopping-list-header" data-mode="default">
-    <select class="show-on-default" onchange="window.location = this.value">
+    <select id="shopping-list-select" onchange="window.location = this.value">
         <ShoppingListOption IsSelected="@false"></ShoppingListOption>
         @foreach (var shoppingList in AllShoppingLists)
         {
@@ -19,41 +19,43 @@
     </select>
     
     <!-- controls for default mode -->
-    <button type="button" class="show-on-default" disabled="@(ShoppingList is null)"
-            onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
-        <i class="ti ti-edit"></i>
-    </button> 
-    <button type="button" class="show-on-default" aria-label="Add shopping list"
-            onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
-        <i class="ti ti-plus"></i>
-    </button>
+    <div id="shopping-list-default-controls">
+        <button type="button" disabled="@(ShoppingList is null)"
+                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
+            <i class="ti ti-edit"></i>
+        </button> 
+        <button type="button" aria-label="Add shopping list"
+                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
+            <i class="ti ti-plus"></i>
+        </button>
+    </div>
     
     <!-- controls for add mode -->
-    <form id="create-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
+    <form id="add-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
           hx-on:htmx:after:request="this.reset();
                 document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
-        <input class="show-on-add" name="name" placeholder="..." aria-required="true"/>
-        <button type="submit" class="show-on-add">
+        <input name="name" placeholder="..." aria-required="true"/>
+        <button type="submit">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset" class="show-on-add"
+        <button type="reset"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
     </form>
     
     <!-- controls for edit mode -->
-    <form id="edit-shopping-list-form" class="show-on-edit" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
+    <form id="edit-shopping-list-form" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
           hx-on:htmx:after:request="window.location = '/shopping-list/@ShoppingList?.Id'"> <!-- updating the shopping list name inside the select would be a hassle -->
-        <input class="show-on-edit" name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
-        <button type="submit" class="show-on-edit">
+        <input name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
+        <button type="submit">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset" class="show-on-edit" 
+        <button type="reset"  
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-        <button type="button" class="show-on-edit secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
+        <button type="button" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
                 hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-on:htmx:after:request="window.location = '/'">
             <i class="ti ti-trash"></i>
         </button>
@@ -64,13 +66,16 @@
 {
     <div id="shopping-list-stage-selectors">
         <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=note">
-            <i class="ti ti-pencil"></i> NOTE
+            <i class="ti ti-pencil"></i>
+            <span>NOTE</span>
         </a>
         <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=shop">
-            <i class="ti ti-shopping-cart"></i> SHOP
+            <i class="ti ti-shopping-cart"></i>
+            <span>SHOP</span>
         </a>
         <a role="button" href="/shopping-list/@ShoppingList?.Id?stage=pay">
-            <i class="ti ti-credit-card"></i> BUY
+            <i class="ti ti-credit-card"></i>
+            <span>BUY</span>
         </a>
     </div>
 }
