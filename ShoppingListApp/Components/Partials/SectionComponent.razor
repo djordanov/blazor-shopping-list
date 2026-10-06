@@ -32,10 +32,13 @@
     <div id="section-@Section?.Id-items">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
-            <ItemCardComponent ShoppingListId="ShoppingListId" SectionId="Section?.Id" Item="item"></ItemCardComponent>
+            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
     </div>
-    <ItemCardComponent ShoppingListId="ShoppingListId" SectionId="Section?.Id"></ItemCardComponent>
+    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
+            hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
+        <i class="ti ti-plus"></i>
+    </button>
 </article>
 
 @code {

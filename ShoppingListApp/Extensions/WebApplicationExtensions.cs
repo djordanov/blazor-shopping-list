@@ -160,8 +160,8 @@ public static class WebApplicationExtensions
             {
                 var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
-                var name = form.TryGetValue("Section.Name", out var rawName) ? rawName.ToString() : "";
-                var sectionId = Guid.TryParse(form["sectionId"], out var parsedSectionId)
+                var name = form.TryGetValue("Name", out var rawName) ? rawName.ToString() : "";
+                var sectionId = Guid.TryParse(form["SectionId"], out var parsedSectionId)
                     ? parsedSectionId
                     : (Guid?)null;
                 
@@ -177,7 +177,6 @@ public static class WebApplicationExtensions
                 return new RazorComponentResult<ItemCardComponent>(new
                 {
                     ShoppingListId = shoppingListId,
-                    SectionId = sectionId,
                     Item = item
                 });
             });
@@ -209,21 +208,25 @@ public static class WebApplicationExtensions
                 }
 
                 var form = await httpContext.Request.ReadFormAsync();
-                if (form.TryGetValue("Item.Name", out var rawName))
+                if (form.TryGetValue("Name", out var rawName))
                 {
                     item.Name = rawName.ToString();
                 }
-                if (form.TryGetValue("Item.Count", out var rawCount) && int.TryParse(rawCount, out var count))
+                if (form.TryGetValue("Count", out var rawCount) && int.TryParse(rawCount, out var count))
                 {
                     item.Count = count;
                 }
-                if (form.TryGetValue("Item.IsCollected", out var rawIsCollected) && bool.TryParse(rawIsCollected, out var isCollected))
+                if (form.TryGetValue("IsCollected", out var rawIsCollected) && bool.TryParse(rawIsCollected, out var isCollected))
                 {
                     item.IsCollected = isCollected;
                 }
                 await db.SaveChangesAsync();
 
-                return Results.Ok();
+                return new RazorComponentResult<ItemCardComponent>(new
+                {
+                    ShoppingListId = shoppingListId,
+                    Item = item
+                });;
             });
         
             return app;

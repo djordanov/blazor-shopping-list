@@ -1,37 +1,39 @@
 @using ShoppingListApp.Entities
 
-@if (Item is null)
-{
-    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@SectionId'}"
-        hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@SectionId-items">
-            <i class="ti ti-plus"></i>
-    </button>
-}
-else
-{
+@{
     var isCollectedClass = Item.IsCollected ? "is-collected" : "";
-    
-    <div class="item-card">
-        <div class="item-card-left @isCollectedClass">
-            <input type="checkbox" checked="@Item.IsCollected" 
-                   hx-vals="js:{'Item.IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
-                   hx-on:htmx:after:request="event.target.closest('.item-card-left').classList.toggle('is-collected', event.target.checked)"/>
-            <input class="item-name" type="text" name="Item.Name" value="@Item.Name"
-                   hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none" hx-trigger="change delay:500ms"/>
-        </div>
-        <div class="item-card-right">
-            <input type="number" name="Item.Count" value="@Item.Count"
-                   hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"/>
-            @* ReSharper disable once Html.AttributeValueNotResolved *@
-            <button hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-                    hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item"><i class="ti ti-trash"></i></button>
-        </div>
-    </div>   
 }
 
+<div class="item-card" data-mode="default">
+    <form class="item-card-left @isCollectedClass" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+          hx-target="closest .item-card" hx-swap="outerHTML">
+        <input type="checkbox" checked="@Item.IsCollected" 
+               hx-vals="js:{'IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
+               hx-on:htmx:after:request="event.target.closest('.item-card-left').classList.toggle('is-collected', event.target.checked)"/>
+        <span>@Item.Name</span>
+        <input class="item-name" type="text" name="Name" value="@Item.Name"/>
+        <button type="submit">
+            <i class="ti ti-check"></i>
+        </button>
+        <button type="reset" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
+            <i class="ti ti-x"></i>
+        </button>
+    </form>
+    <div class="item-card-right">
+        <input type="number" name="Count" value="@Item.Count"
+               hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"/>
+        <button type="button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
+            <i class="ti ti-edit"></i>
+        </button>
+        <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+                hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
+            <i class="ti ti-trash"></i>
+        </button>
+    </div>
+</div>   
+
 @code {
-    [Parameter] public Guid ShoppingListId { get; set; }
-    [Parameter] public Guid? SectionId { get; set; }
-    [Parameter] public Item? Item { get; set; }
+    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
+    [Parameter, EditorRequired] public required Item Item { get; set; }
     [SupplyParameterFromQuery, EditorRequired] public required string Stage { get; set; }
 }
