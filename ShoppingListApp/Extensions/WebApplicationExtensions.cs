@@ -32,7 +32,7 @@ public static class WebApplicationExtensions
     
                 db.ShoppingList.Add(shoppingList);
                 await db.SaveChangesAsync();
-                return new RazorComponentResult<ShoppingListOption>(new
+                return new RazorComponentResult<ShoppingListOptionComponent>(new
                 {
                     ShoppingList = shoppingList,
                     IsSelected = false

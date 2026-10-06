@@ -11,10 +11,10 @@
 
 <div id="shopping-list-header" data-mode="default">
     <select id="shopping-list-select" onchange="window.location = this.value">
-        <ShoppingListOption IsSelected="@false"></ShoppingListOption>
+        <ShoppingListOptionComponent IsSelected="@false"></ShoppingListOptionComponent>
         @foreach (var shoppingList in AllShoppingLists)
         {
-            <ShoppingListOption ShoppingList="@shoppingList" IsSelected="@(shoppingList.Id == Id)"></ShoppingListOption>
+            <ShoppingListOptionComponent ShoppingList="@shoppingList" IsSelected="@(shoppingList.Id == Id)"></ShoppingListOptionComponent>
         }
     </select>
     
