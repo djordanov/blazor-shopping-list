@@ -212,9 +212,13 @@ public static class WebApplicationExtensions
                 {
                     item.Name = rawName.ToString();
                 }
-                if (form.TryGetValue("Count", out var rawCount) && int.TryParse(rawCount, out var count))
+                if (form.TryGetValue("CountDelta", out var rawCount) && int.TryParse(rawCount, out var countDelta))
                 {
-                    item.Count = count;
+                    item.Count += countDelta;
+                    if (item.Count < 0)
+                    {
+                        item.Count = 0;
+                    }
                 }
                 if (form.TryGetValue("IsCollected", out var rawIsCollected) && bool.TryParse(rawIsCollected, out var isCollected))
                 {

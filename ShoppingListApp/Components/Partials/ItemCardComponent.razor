@@ -4,12 +4,12 @@
     var isCollectedClass = Item.IsCollected ? "is-collected" : "";
 }
 
-<div class="item-card" data-mode="default">
-    <form class="item-card-left @isCollectedClass" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+<div class="item-card @isCollectedClass" data-mode="default">
+    <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
         <input type="checkbox" checked="@Item.IsCollected" 
                hx-vals="js:{'IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
-               hx-on:htmx:after:request="event.target.closest('.item-card-left').classList.toggle('is-collected', event.target.checked)"/>
+               hx-on:htmx:after:request="event.target.closest('.item-card').classList.toggle('is-collected', event.target.checked)"/>
         <span>@Item.Name</span>
         <input class="item-name" type="text" name="Name" value="@Item.Name"/>
         <button type="submit">
@@ -20,8 +20,19 @@
         </button>
     </form>
     <div class="item-card-right">
-        <input type="number" name="Count" value="@Item.Count"
-               hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"/>
+        <div class="item-count-stepper">
+            <button type="button" disabled="@(Item.Count < 1)"
+                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
+                    hx-vals="js:{'CountDelta': -1}">
+                <i class="ti ti-minus"></i>    
+            </button>
+            <span>@Item.Count</span>
+            <button type="button"
+                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
+                    hx-vals="js:{'CountDelta': +1}">
+                <i class="ti ti-plus"></i>
+            </button>
+        </div>
         <button type="button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
             <i class="ti ti-edit"></i>
         </button>
