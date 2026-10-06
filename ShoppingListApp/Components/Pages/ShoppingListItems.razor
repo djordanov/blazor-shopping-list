@@ -65,24 +65,24 @@
 @if (ShoppingList is not null)
 {
     <div id="shopping-list-stage-selectors">
-        <a role="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'note')">
+        <button type="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'note')">
             <i class="ti ti-pencil"></i>
             <span>NOTE</span>
-        </a>
-        <a role="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'shop')">
+        </button>
+        <button type="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'shop')">
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
-        </a>
-        <a role="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'buy')">
+        </button>
+        <button type="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'buy')">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
-        </a>
+        </button>
     </div>
 }
 
 @if(ShoppingList is not null)
 {
-    <div id="sections" data-stage="note">
+    <div id="sections" data-stage="@(Stage is "shop" or "buy" ? Stage : "note")">
         @foreach (var section in ShoppingList?.Sections ?? [])
         {
             <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
