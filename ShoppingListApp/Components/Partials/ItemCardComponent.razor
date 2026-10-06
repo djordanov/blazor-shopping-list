@@ -20,19 +20,7 @@
         </button>
     </form>
     <div class="item-card-right">
-        <div class="item-count-stepper">
-            <button type="button" disabled="@(Item.Count < 1)"
-                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
-                    hx-vals="js:{'CountDelta': -1}">
-                <i class="ti ti-minus"></i>    
-            </button>
-            <span>@Item.Count</span>
-            <button type="button"
-                    hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
-                    hx-vals="js:{'CountDelta': +1}">
-                <i class="ti ti-plus"></i>
-            </button>
-        </div>
+        <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
         <button type="button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
             <i class="ti ti-edit"></i>
         </button>
