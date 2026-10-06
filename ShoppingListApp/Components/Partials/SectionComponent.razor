@@ -6,22 +6,23 @@
         <header data-mode="@Mode">
             <!-- default mode -->
             <div>
-                <span class="show-on-default">@Section.Name</span>
-                <button type="button" class="show-on-default" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
+                <span>@Section.Name</span>
+                <button type="button" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
                     <i class="ti ti-edit"></i>
                 </button> 
             </div>
             
             <!-- controls for edit mode -->
-            <form hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
-                <input class="show-on-edit" type="text" name="Section.Name" value="@Section.Name"/>
-                <button type="submit" class="show-on-edit">
+            <form class="section-edit-form"
+                hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
+                <input type="text" name="Section.Name" value="@Section.Name"/>
+                <button type="submit">
                     <i class="ti ti-check"></i>
                 </button>
-                <button type="reset" class="show-on-edit" onclick="this.closest('header').setAttribute('data-mode', 'default')">
+                <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
                     <i class="ti ti-x"></i>
                 </button>
-                <button class="show-on-edit" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
+                <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
                         hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section">
                     <i class="ti ti-trash"></i>
                 </button>
