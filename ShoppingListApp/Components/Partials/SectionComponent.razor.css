@@ -17,3 +17,8 @@ header[data-mode="default"] > div > span,
 header[data-mode="edit"] .section-edit-form input {
     flex-grow: 1;
 }
+
+#sections[data-stage="shop"] header > div button,
+#sections[data-stage="buy"] header > div button {
+    display: none;
+}

@@ -28,3 +28,12 @@
 .item-card.is-collected ::deep span {
     text-decoration: line-through;
 }
+
+#sections[data-stage="note"] .item-card-left input[type="checkbox"] {
+    display: none;
+}
+
+#sections[data-stage="shop"] .item-card-right > button,
+#sections[data-stage="buy"] .item-card-right > button {
+    display: none;
+}

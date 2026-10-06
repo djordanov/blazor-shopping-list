@@ -1,0 +1,3 @@
+#sections[data-stage="buy"] .item-count-stepper > button {
+    display: none;
+}
