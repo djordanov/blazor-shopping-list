@@ -230,7 +230,7 @@ public static class WebApplicationExtensions
                 {
                     ShoppingListId = shoppingListId,
                     Item = item
-                });;
+                });
             });
         
             return app;
