@@ -159,11 +159,14 @@
         AllShoppingLists = await db.ShoppingList.OrderBy(sl => sl.Name).ToListAsync();
         
         ShoppingList = await db.ShoppingList
-            .Include(sl => sl.Sections)
-            .Include(sl => sl.ListItems)
+            .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
+            .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
             .FirstOrDefaultAsync(sl => sl.Id == Id);
 
-        ItemsWithoutSection = (ShoppingList?.ListItems ?? []).Where(i => i.SectionId == null).ToList();
+        ItemsWithoutSection = (ShoppingList?.ListItems ?? [])
+            .Where(i => i.SectionId == null)
+            .OrderBy(i => i.SortOrder)
+            .ToList();
     }
 
     private async Task<IResult> Buy()
