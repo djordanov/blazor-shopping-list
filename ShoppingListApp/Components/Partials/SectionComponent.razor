@@ -29,23 +29,19 @@
             </form>
         </header>
     }
-    <div id="section-@Section?.Id-items">
+    <div id="section-@Section?.Id-items" class="sortable"
+         hx-trigger="end" hx-swap="none"
+         hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
-    </div>
-    
-    <!-- a single add item button -->
-    <!-- items are by default added into no section -->
-    <!-- and drag-and-dropped into their section after creation -->
-    @if (Section is null)
-    {   
         <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
                 hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
-            <i class="ti ti-plus"></i>
+            <i class="ti ti-plus"></i><span>ADD ITEM</span>
         </button>
-    }
+    </div>
+    
 </article>
 
 @code {

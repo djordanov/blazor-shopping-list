@@ -6,7 +6,10 @@
 
 <div class="item-card @isCollectedClass" data-mode="@Mode"
      hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-trigger="end" hx-swap="none">
-    <input type="hidden" name="SortOrder" value="@Item.SortOrder"/>
+    
+    <!-- for POST by sortable -->
+    <input type="hidden" name="Id" value="@Item.Id"/>
+    
     <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
     <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">

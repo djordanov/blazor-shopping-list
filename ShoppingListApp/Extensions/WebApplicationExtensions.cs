@@ -82,6 +82,33 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapSectionEndpoints()
         {
+            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid?}/sort",
+                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid? sectionId) =>
+                {
+                    var db = await dbFactory.CreateDbContextAsync();
+                    var form = await httpContext.Request.ReadFormAsync();
+                    form.TryGetValue("Id", out var rawIds);
+                    var ids = rawIds
+                        .Select(idString => Guid.TryParse(idString, out var id) ? id : Guid.Empty)
+                        .Where(id => id != Guid.Empty)
+                        .ToList(); // need to preserve sort order
+
+                    var items = await db.Item
+                        .Where(i => ids.Contains(i.Id))
+                        .ToListAsync();
+                    var i = 0;
+                    foreach (var itemId in ids)
+                    {
+                        var item = items.First(item => item.Id == itemId); // bit roundabout to preserve sort order
+                        item.SectionId = sectionId;
+                        item.SortOrder = i;
+                        i++;
+                    }
+                    
+                    await db.SaveChangesAsync();
+                    return Results.Ok();
+                });
+            
             app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section",
                 async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
             {
