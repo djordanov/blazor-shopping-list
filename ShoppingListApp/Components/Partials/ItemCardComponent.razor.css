@@ -2,13 +2,13 @@ form span {
     padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
 }
 
+.item-card button[type="submit"] {
+    width: revert;
+}
+
 .item-card {
     display: flex;
     justify-content: space-between;
-}
-
-.item-card button[type="submit"] {
-    width: revert;
 }
 
 .item-card-left, .item-card-right {
@@ -43,6 +43,7 @@ form span {
 }
 
 #sections[data-stage="shop"] .item-card-right > button,
+#sections[data-stage="buy"] .handle,
 #sections[data-stage="buy"] .item-card-right > button {
     display: none;
 }

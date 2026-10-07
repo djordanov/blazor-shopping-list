@@ -4,10 +4,13 @@
     var isCollectedClass = Item.IsCollected ? "is-collected" : "";
 }
 
-<div class="item-card @isCollectedClass" data-mode="@Mode">
+<div class="item-card @isCollectedClass" data-mode="@Mode"
+     hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-trigger="end" hx-swap="none">
+    <input type="hidden" name="SortOrder" value="@Item.SortOrder"/>
+    <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
     <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
-        <input type="checkbox" checked="@Item.IsCollected" 
+        <input type="checkbox" checked="@Item.IsCollected"
                hx-vals="js:{'IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
                hx-on:htmx:after:request="event.target.closest('.item-card').classList.toggle('is-collected', event.target.checked)"/>
         <span>@Item.Name</span>
