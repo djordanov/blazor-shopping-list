@@ -73,7 +73,7 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </button>
-        <button type="button" onclick="document.getElementById('sections').setAttribute('data-stage', 'buy')">
+        <button type="button">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
         </button>
@@ -82,7 +82,7 @@
 
 @if(ShoppingList is not null)
 {
-    <div id="sections" data-stage="@(Stage is "shop" or "buy" ? Stage : "note")">
+    <div id="sections" data-stage="@(Stage is "shop" ? Stage : "note")">
         @foreach (var section in ShoppingList?.Sections ?? [])
         {
             <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>

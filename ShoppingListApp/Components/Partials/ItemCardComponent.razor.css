@@ -4,6 +4,7 @@ form span {
 
 .item-card button[type="submit"] {
     width: revert;
+    height: revert;
 }
 
 .item-card {
@@ -43,7 +44,6 @@ form span {
 }
 
 #sections[data-stage="shop"] .item-card-right > button,
-#sections[data-stage="buy"] .handle,
-#sections[data-stage="buy"] .item-card-right > button {
+#sections[data-stage="shop"] .handle {
     display: none;
 }

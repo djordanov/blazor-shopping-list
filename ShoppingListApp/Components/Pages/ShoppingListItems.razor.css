@@ -5,6 +5,7 @@
 
 #shopping-list-header button[type="submit"] {
     width: revert;
+    height: revert;
 }
 
 #shopping-list-header form input {

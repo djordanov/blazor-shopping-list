@@ -9,6 +9,7 @@ header span {
 
 header button[type="submit"] {
     width: revert;
+    height: revert;
 }
 
 header > div,
@@ -27,7 +28,6 @@ header[data-mode="edit"] .section-edit-form input {
     flex-grow: 1;
 }
 
-#sections[data-stage="shop"] header > div button,
-#sections[data-stage="buy"] header > div button {
+#sections[data-stage="shop"] header > div button {
     display: none;
 }
