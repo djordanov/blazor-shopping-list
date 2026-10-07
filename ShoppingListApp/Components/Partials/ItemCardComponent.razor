@@ -10,7 +10,6 @@
     <!-- for POST by sortable -->
     <input type="hidden" name="Id" value="@Item.Id"/>
     
-    <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
     <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
         <input type="checkbox" checked="@Item.IsCollected"
@@ -34,6 +33,7 @@
                 hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
             <i class="ti ti-trash"></i>
         </button>
+        <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
     </div>
 </div>   
 

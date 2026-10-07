@@ -2,6 +2,12 @@ form span {
     padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
 }
 
+.handle {
+    cursor: grab;
+    padding: var(--pico-form-element-spacing-vertical) 0;
+    margin-top: 5px;
+}
+
 .item-card button[type="submit"] {
     width: revert;
     height: revert;
