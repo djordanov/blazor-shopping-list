@@ -103,7 +103,7 @@
     
     <dialog id="buy-dialog" closedby="any">
         <article>
-            <form method="post" action="/shopping-list/@Id/buy">
+            <form method="post" action="/shopping-list/@Id?action=buy">
                 <b>Are you sure you bought the following items?</b>
                 <p>The purchase of all collected will be recorded and your shopping list reset for next time</p>
                 @foreach (var section in ShoppingList.Sections)
