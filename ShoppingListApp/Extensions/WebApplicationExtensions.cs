@@ -177,7 +177,8 @@ public static class WebApplicationExtensions
                 return new RazorComponentResult<ItemCardComponent>(new
                 {
                     ShoppingListId = shoppingListId,
-                    Item = item
+                    Item = item,
+                    Mode = "edit"
                 });
             });
             

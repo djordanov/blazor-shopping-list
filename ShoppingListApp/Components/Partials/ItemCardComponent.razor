@@ -4,7 +4,7 @@
     var isCollectedClass = Item.IsCollected ? "is-collected" : "";
 }
 
-<div class="item-card @isCollectedClass" data-mode="default">
+<div class="item-card @isCollectedClass" data-mode="@Mode">
     <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
         <input type="checkbox" checked="@Item.IsCollected" 
@@ -21,7 +21,7 @@
     </form>
     <div class="item-card-right">
         <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
-        <button type="button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
+        <button type="button" class="item-name-edit-button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
             <i class="ti ti-edit"></i>
         </button>
         <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
@@ -34,4 +34,5 @@
 @code {
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
+    [Parameter] public string Mode { get; set; } = "default";
 }

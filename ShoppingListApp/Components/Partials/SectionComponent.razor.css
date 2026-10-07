@@ -1,3 +1,12 @@
+header {
+    background-color: revert;
+}
+
+header span {
+    font-weight: bold;
+    padding: var(--pico-form-element-spacing-vertical) var(--pico-form-element-spacing-horizontal);
+}
+
 header button[type="submit"] {
     width: revert;
 }
