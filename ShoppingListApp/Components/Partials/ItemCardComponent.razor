@@ -27,16 +27,14 @@
             <i class="ti ti-x"></i>
         </button>
     </form>
-    <div class="item-card-right">
-        <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
-        @if (Stage is "note")
-        {
-            <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-                    hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
-                <i class="ti ti-trash"></i>
-            </button>
-        }
-    </div>
+    <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
+    @if (Stage is "note")
+    {
+        <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+                hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
+            <i class="ti ti-trash"></i>
+        </button>
+    }
 </div>   
 
 @code {

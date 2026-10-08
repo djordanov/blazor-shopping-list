@@ -15,28 +15,26 @@ form span {
 
 .item-card {
     display: flex;
-    justify-content: space-between;
-}
-
-.item-card-left, .item-card-right {
-    display: flex;
     gap: 0.5rem;
 }
 
-.item-card-left > span,
-.item-card-left > input.item-name,
-.item-card-left > button, 
-.item-name-edit-button {
+.item-card-left {
+    display: flex;
+    gap: 0.5rem;
+    flex-grow: 1;
+}
+
+.item-card-left > .item-name,
+.item-card-left > button {
     display: none;
 }
 
-.item-card[data-mode="default"] span,
+.item-card[data-mode="default"] span.item-name,
 .item-card[data-mode="edit"] input.item-name {
     display: revert;
     flex-grow: 1;
 }
 
-.item-card[data-mode="default"] .item-name-edit-button,
 .item-card[data-mode="edit"] button {
     display: revert;
 }
