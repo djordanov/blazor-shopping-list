@@ -10,6 +10,24 @@ namespace ShoppingListApp.Extensions;
 
 public static class WebApplicationExtensions
 {
+    private static string GetStage(HttpContext httpContext)
+    {
+        if (httpContext.Request.Query.TryGetValue("stage", out var stage))
+        {
+            return stage.ToString();
+        }
+
+        // HTMX requests do not carry the page's query string, but do send the current URL
+        if (httpContext.Request.Headers.TryGetValue("HX-Current-URL", out var currentUrl) &&
+            Uri.TryCreate(currentUrl.ToString(), UriKind.Absolute, out var uri) &&
+            Uri.UnescapeDataString(uri.Query) is { Length: > 0 } query &&
+            System.Web.HttpUtility.ParseQueryString(query)["stage"] is { Length: > 0 } htmxStage)
+        {
+            return htmxStage;
+        }
+
+        return "note";
+    }
     extension(WebApplication app)
     {
         [UsedImplicitly]
@@ -129,6 +147,7 @@ public static class WebApplicationExtensions
                     ShoppingListId = shoppingListId,
                     Section = section,
                     Mode = "edit",
+                    Stage = GetStage(httpContext),
                     Items = new List<Item>()
                 });
             });
@@ -173,6 +192,7 @@ public static class WebApplicationExtensions
                     ShoppingListId = shoppingListId,
                     Section = section,
                     Mode = "default",
+                    Stage = GetStage(httpContext),
                     Items = new List<Item>()
                 });
             });
@@ -205,7 +225,8 @@ public static class WebApplicationExtensions
                 {
                     ShoppingListId = shoppingListId,
                     Item = item,
-                    Mode = "edit"
+                    Mode = "edit",
+                    Stage = GetStage(httpContext)
                 });
             });
             
@@ -257,7 +278,8 @@ public static class WebApplicationExtensions
                 return new RazorComponentResult<ItemCardComponent>(new
                 {
                     ShoppingListId = shoppingListId,
-                    Item = item
+                    Item = item,
+                    Stage = GetStage(httpContext)
                 });
             });
         

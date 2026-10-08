@@ -12,9 +12,12 @@
     
     <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
+        @if (Stage is "shop")
+        {
         <input type="checkbox" checked="@Item.IsCollected"
                hx-vals="js:{'IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
                hx-on:htmx:after:request="event.target.closest('.item-card').classList.toggle('is-collected', event.target.checked)"/>
+        }
         <span>@Item.Name</span>
         <input class="item-name" type="text" name="Name" value="@Item.Name"/>
         <button type="submit">
@@ -26,14 +29,17 @@
     </form>
     <div class="item-card-right">
         <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
-        <button type="button" class="item-name-edit-button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
-            <i class="ti ti-edit"></i>
-        </button>
-        <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-                hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
-            <i class="ti ti-trash"></i>
-        </button>
-        <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
+        @if (Stage is "note")
+        {
+            <button type="button" class="item-name-edit-button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
+                <i class="ti ti-edit"></i>
+            </button>
+            <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+                    hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
+                <i class="ti ti-trash"></i>
+            </button>
+            <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
+        }
     </div>
 </div>   
 
@@ -41,4 +47,5 @@
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+    [Parameter] public string Stage { get; set; } = "note";
 }

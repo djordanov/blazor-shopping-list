@@ -7,9 +7,12 @@
             <!-- default mode -->
             <div>
                 <span>@Section.Name</span>
-                <button type="button" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
-                    <i class="ti ti-edit"></i>
-                </button> 
+                @if (Stage is "note")
+                {
+                    <button type="button" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
+                        <i class="ti ti-edit"></i>
+                    </button>
+                }
             </div>
             
             <!-- controls for edit mode -->
@@ -34,7 +37,7 @@
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
-            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
+            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item" Stage="@Stage"></ItemCardComponent>
         }
         <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
                 hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
@@ -49,4 +52,5 @@
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+    [Parameter] public string Stage { get; set; } = "note";
 }

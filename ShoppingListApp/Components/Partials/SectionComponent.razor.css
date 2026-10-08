@@ -28,6 +28,3 @@ header[data-mode="edit"] .section-edit-form input {
     flex-grow: 1;
 }
 
-#sections[data-stage="shop"] header > div button {
-    display: none;
-}

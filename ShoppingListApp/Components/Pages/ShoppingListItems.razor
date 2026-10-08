@@ -66,16 +66,14 @@
 @if (ShoppingList is not null)
 {
     <div id="shopping-list-stage-selectors">
-        <button type="button" aria-label="Note"
-                onclick="document.getElementById('sections').setAttribute('data-stage', 'note')">
+        <a href="/shopping-list/@ShoppingList?.Id?stage=note" role="button" aria-label="Note">
             <i class="ti ti-pencil"></i>
             <span>NOTE</span>
-        </button>
-        <button type="button" aria-label="Shop" 
-                onclick="document.getElementById('sections').setAttribute('data-stage', 'shop')">
+        </a>
+        <a href="/shopping-list/@ShoppingList?.Id?stage=shop" role="button" aria-label="Shop">
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
-        </button>
+        </a>
         <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
@@ -85,21 +83,22 @@
 
 @if(ShoppingList is not null)
 {
-    <div id="sections" data-stage="@(Stage is "shop" ? Stage : "note")">
+    <div id="sections">
         @foreach (var section in ShoppingList?.Sections ?? [])
         {
-            <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
+            <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems" Stage="@Stage"></SectionComponent>
         }
 
         @if (ItemsWithoutSection.Any())
         {
-            <SectionComponent ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()"></SectionComponent>
+            <SectionComponent ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()" Stage="@Stage"></SectionComponent>
         }
     </div>
 
     <button type="submit" aria-label="Add section"
             hx-post="/htmx/shopping-list/@ShoppingList!.Id/section" hx-swap="append" hx-target="#sections">
         <i class="ti ti-plus"></i>
+        <span>ADD SECTION</span>
     </button>
     
     <dialog id="buy-dialog" closedby="any">
