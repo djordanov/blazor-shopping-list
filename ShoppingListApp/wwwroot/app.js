@@ -8,7 +8,7 @@ htmx.onLoad( content => {
         section.dataset.sortable = 'true';
         
         new Sortable(section, {
-            handle: '.handle',
+            handle: '.item-name',
             animation: 150,
             group: 'shared'
         })

@@ -18,7 +18,7 @@
                hx-vals="js:{'IsCollected': event.target.checked}" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-swap="none"
                hx-on:htmx:after:request="event.target.closest('.item-card').classList.toggle('is-collected', event.target.checked)"/>
         }
-        <span>@Item.Name</span>
+        <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
         <input class="item-name" type="text" name="Name" value="@Item.Name"/>
         <button type="submit">
             <i class="ti ti-check"></i>
@@ -31,14 +31,10 @@
         <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
         @if (Stage is "note")
         {
-            <button type="button" class="item-name-edit-button" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">
-                <i class="ti ti-edit"></i>
-            </button>
             <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
                     hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
                 <i class="ti ti-trash"></i>
             </button>
-            <i class="ti ti-dots-vertical handle" ondrag="this.style.cursor = 'grabbing'"></i>
         }
     </div>
 </div>   
