@@ -5,15 +5,7 @@
     {   
         <header data-mode="@Mode">
             <!-- default mode -->
-            <div>
-                <span>@Section.Name</span>
-                @if (Stage is "note")
-                {
-                    <button type="button" onclick="this.closest('header').setAttribute('data-mode', 'edit')">
-                        <i class="ti ti-edit"></i>
-                    </button>
-                }
-            </div>
+            <span onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
             
             <!-- controls for edit mode -->
             <form class="section-edit-form"
