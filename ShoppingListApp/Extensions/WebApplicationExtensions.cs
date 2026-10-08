@@ -174,7 +174,7 @@ public static class WebApplicationExtensions
                 async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid sectionId) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
-                var section = await db.Section.FindAsync(sectionId);
+                var section = await db.Section.Include(s => s.ListItems).FirstOrDefaultAsync(s => s.Id == sectionId);
                 if (section is null || section.ShoppingListId != shoppingListId)
                 {
                     return Results.NotFound();
@@ -193,7 +193,7 @@ public static class WebApplicationExtensions
                     Section = section,
                     Mode = "default",
                     Stage = GetStage(httpContext),
-                    Items = new List<Item>()
+                    Items = section.ListItems
                 });
             });
             

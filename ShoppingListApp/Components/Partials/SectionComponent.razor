@@ -31,11 +31,12 @@
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item" Stage="@Stage"></ItemCardComponent>
         }
-        <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
-                hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
-            <i class="ti ti-plus"></i><span>ADD ITEM</span>
-        </button>
     </div>
+    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
+            hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
+        <i class="ti ti-plus"></i>
+        <span>ADD ITEM</span>
+    </button>
     
 </article>
 
