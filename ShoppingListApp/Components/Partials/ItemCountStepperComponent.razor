@@ -1,13 +1,13 @@
 @using ShoppingListApp.Entities
 
 <div class="item-count-stepper">
-    <button type="button" disabled="@(Item.Count < 1)"
+    <button type="button" class="secondary outline" disabled="@(Item.Count < 1)"
             hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
             hx-vals="js:{'CountDelta': -1}">
-        <i class="ti ti-minus"></i>    
+        <i class="ti ti-minus"></i>
     </button>
     <span>@Item.Count</span>
-    <button type="button"
+    <button type="button" class="secondary outline"
             hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-target="closest .item-card" hx-swap="outerHTML"
             hx-vals="js:{'CountDelta': +1}">
         <i class="ti ti-plus"></i>

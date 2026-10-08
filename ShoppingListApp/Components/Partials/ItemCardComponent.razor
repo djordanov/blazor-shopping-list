@@ -20,17 +20,17 @@
         }
         <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
         <input class="item-name" type="text" name="Name" value="@Item.Name"/>
-        <button type="submit">
+        <button type="submit" class="outline">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
+        <button type="reset" class="outline" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
     </form>
     <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
     @if (Stage is "note")
     {
-        <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+        <button type="button" class="secondary outline" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
                 hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
             <i class="ti ti-trash"></i>
         </button>
