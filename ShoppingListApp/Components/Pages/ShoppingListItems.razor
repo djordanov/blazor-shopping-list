@@ -73,7 +73,8 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </a>
-        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy">
+        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy"
+                hx-get="/htmx/shopping-list/@ShoppingList?.Id/buy" hx-target="#buy-dialog > article" hx-swap="innerHTML">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
         </button>
@@ -95,7 +96,7 @@
         <span>ADD SECTION</span>
     </button>
     
-    <dialog id="buy-dialog" closedby="any" hx-get="/htmx/shopping-list/@ShoppingList.Id/buy" hx-target="#buy-dialog > article">
+    <dialog id="buy-dialog" closedby="any">
         <article>
             <p>Loading ...</p>
         </article>

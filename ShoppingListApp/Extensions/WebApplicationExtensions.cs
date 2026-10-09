@@ -38,6 +38,36 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapShoppingListEndpoints()
         {
+            app.MapGet("/htmx/shopping-list/{id:Guid}/buy", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
+            {
+                await using var db = await dbFactory.CreateDbContextAsync();
+                var shoppingList = await db.ShoppingList
+                    .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
+                    .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
+                    .FirstOrDefaultAsync(sl => sl.Id == id);
+                
+                return new RazorComponentResult<BuyModalComponent>(new
+                {
+                    ShoppingList = shoppingList
+                });
+            });
+            
+            app.MapPost("/htmx/shopping-list/{id:Guid}/buy", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
+            {
+                await using var db = await dbFactory.CreateDbContextAsync();
+        
+                var collectedItems = await db.Item
+                    .Where(i => i.ShoppingListId == id && i.ItemStatus == ItemStatus.Collected)
+                    .ToListAsync();
+                foreach (var item in collectedItems)
+                {
+                    item.ItemStatus = ItemStatus.Noted;
+                }
+
+                await db.SaveChangesAsync();
+                httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{id}";
+            });
+
             app.MapPost("/htmx/shopping-list", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
             {
                 var db = await dbFactory.CreateDbContextAsync();
@@ -106,6 +136,7 @@ public static class WebApplicationExtensions
         public WebApplication MapSectionEndpoints()
         {
             app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid?}/sort",
+                // ReSharper disable once UnusedParameter.Local
                 async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid? sectionId) =>
                 {
                     var db = await dbFactory.CreateDbContextAsync();

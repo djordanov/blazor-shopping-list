@@ -1,0 +1,34 @@
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
+@using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<form hx-post="/htmx/shopping-list/@ShoppingList.Id/buy" hx-swap="none">
+    <b>Are you sure you bought the following items?</b>
+    <p>Your shopping list will be reset for the next trip!</p>
+    @foreach (var section in ShoppingList?.Sections ?? [])
+    {
+        var items = ShoppingList!.ListItems
+            .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
+            .ToList();
+        if (items.Count > 0)
+        {
+            <strong>@section.Name</strong>
+            <ul>
+                @foreach (var item in items)
+                {
+                    <li>@item.Count @item.Name</li>
+                }   
+            </ul>
+        }
+    }
+    
+    <button type="submit">
+        <i class="ti ti-check"></i>
+        <span>DONE</span>
+    </button>
+</form>
+
+@code {
+    [Parameter, EditorRequired] public ShoppingList ShoppingList { get; init; }
+}
