@@ -10,7 +10,7 @@
     <!-- for POST by sortable -->
     <input type="hidden" name="Id" value="@Item.Id"/>
     
-    <form class="item-card-left" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+    <form hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
         <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item" Stage="@Stage"></ItemStatusButton>
         <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
@@ -21,15 +21,12 @@
         <button type="reset" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-    </form>
-    <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
-    @if (Stage is Stage.Note)
-    {
         <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
                 hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
             <i class="ti ti-trash"></i>
         </button>
-    }
+    </form>
+    <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
 </div>   
 
 @code {

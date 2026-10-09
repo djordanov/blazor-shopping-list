@@ -18,18 +18,19 @@ form span {
     gap: 0.5rem;
 }
 
-.item-card-left {
+form {
     display: flex;
     gap: 0.5rem;
     flex-grow: 1;
 }
 
-.item-card-left > .item-name,
-.item-card-left > button {
+form > .item-name,
+form > button {
     display: none;
 }
 
-.item-card[data-mode="edit"] .item-count-stepper {
+.item-card[data-mode="edit"] ::deep .item-status-button,
+.item-card[data-mode="edit"] ::deep .item-count-stepper {
     display: none;
 }
 
