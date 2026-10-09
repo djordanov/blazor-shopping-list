@@ -65,11 +65,11 @@
 @if (ShoppingList is not null)
 {
     <div id="shopping-list-stage-selectors">
-        <a href="/shopping-list/@ShoppingList?.Id?stage=note" role="button" aria-label="Note">
+        <a href="/shopping-list/@ShoppingList?.Id?stage=@Stage.Note" role="button" aria-label="Note">
             <i class="ti ti-pencil"></i>
             <span>NOTE</span>
         </a>
-        <a href="/shopping-list/@ShoppingList?.Id?stage=shop" role="button" aria-label="Shop">
+        <a href="/shopping-list/@ShoppingList?.Id?stage=@Stage.Shop" role="button" aria-label="Shop">
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </a>
@@ -108,7 +108,7 @@
                 @foreach (var section in ShoppingList.Sections)
                 {
                     var items = ShoppingList.ListItems
-                        .Where(i => i.SectionId == section.Id && i.IsCollected)
+                        .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
                         .ToList();
                     if (items.Count > 0)
                     {
@@ -122,11 +122,11 @@
                     }
                 }
                 
-                @if(ShoppingList.ListItems.Exists(i => i.SectionId == null && i.IsCollected))
+                @if(ShoppingList.ListItems.Exists(i => i.SectionId == null && i.ItemStatus == ItemStatus.Collected))
                 {
                     <strong>Additional</strong>
                     <ul>
-                    @foreach (var item in ShoppingList.ListItems.Where(i => i.SectionId == null && i.IsCollected))
+                    @foreach (var item in ShoppingList.ListItems.Where(i => i.SectionId == null && i.ItemStatus == ItemStatus.Collected))
                     {
                         <li>@item.Count @item.Name</li>
                     }
@@ -148,7 +148,7 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
     private List<Item> ItemsWithoutSection { get; set; } = [];
-    [SupplyParameterFromQuery] public string Stage { get; set; } = "note";
+    [SupplyParameterFromQuery] public Stage Stage { get; set; } = Stage.Note;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -176,11 +176,11 @@
         
         await using var db = await DbFactory.CreateDbContextAsync();
         var collectedItems = await db.Item
-            .Where(i => i.ShoppingListId == ShoppingList.Id && i.IsCollected)
+            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
             .ToListAsync();
         foreach (var item in collectedItems)
         {
-            item.IsCollected = false;
+            item.ItemStatus = null;
         }
         await db.SaveChangesAsync();
 

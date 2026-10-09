@@ -34,8 +34,8 @@ namespace ShoppingListApp.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsCollected")
-                        .HasColumnType("boolean");
+                    b.Property<int?>("ItemStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -269,10 +269,6 @@ public static class WebApplicationExtensions
                         item.Count = 0;
                     }
                 }
-                if (form.TryGetValue("IsCollected", out var rawIsCollected) && bool.TryParse(rawIsCollected, out var isCollected))
-                {
-                    item.IsCollected = isCollected;
-                }
                 await db.SaveChangesAsync();
 
                 return new RazorComponentResult<ItemCardComponent>(new

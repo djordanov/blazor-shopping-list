@@ -27,7 +27,7 @@
     <div id="section-@Section?.Id-items" class="sortable"
          hx-trigger="end" hx-swap="none"
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
-        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
+        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id && (Stage != Stage.Shop || i.ItemStatus == ItemStatus.Collected)))
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item" Stage="@Stage"></ItemCardComponent>
         }
@@ -45,5 +45,5 @@
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [Parameter] public string Stage { get; set; } = "note";
+    [Parameter] public Stage Stage { get; set; } = Stage.Note;
 }

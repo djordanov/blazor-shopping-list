@@ -1,0 +1,39 @@
+@using ShoppingListApp.Entities
+
+@{
+    var icon = "";
+    var itemStatusPatch = ItemStatus.Noted;
+    
+    switch (Stage, Item.ItemStatus)
+    {
+        case (Stage.Note, ItemStatus.Noted):
+            icon = "ti-square-rounded";
+            itemStatusPatch = ItemStatus.Planned;
+            break;
+        case (Stage.Note, ItemStatus.Planned):
+            icon = "ti-square-rounded-plus";
+            itemStatusPatch = ItemStatus.Noted;
+            break;
+        case (Stage.Shop, ItemStatus.Planned):
+            icon = "ti-square-rounded-plus";
+            itemStatusPatch = ItemStatus.Collected;
+            break;
+        case (Stage.Shop, ItemStatus.Collected):
+            icon = "ti-square-rounded-check";
+            itemStatusPatch = ItemStatus.Planned;
+            break;
+    }
+}
+
+<button type="button" class="secondary outline" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
+        hx-vals="js:{'ItemStatus': @itemStatusPatch}"
+        hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Mark item as planned">
+    <i class="ti @icon"></i>
+</button>
+
+@code {
+    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
+    [Parameter, EditorRequired] public required Item Item { get; set; }
+    [Parameter, EditorRequired] public required Stage Stage { get; set; } = Stage.Note;
+}
+
