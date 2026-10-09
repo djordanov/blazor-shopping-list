@@ -20,11 +20,11 @@
     
     <!-- controls for default mode -->
     <div id="shopping-list-default-controls">
-        <button type="button" class="outline" disabled="@(ShoppingList is null)"
+        <button type="button" disabled="@(ShoppingList is null)"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
             <i class="ti ti-edit"></i>
         </button> 
-        <button type="button" class="outline" aria-label="Add shopping list"
+        <button type="button" aria-label="Add shopping list"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
             <i class="ti ti-plus"></i>
         </button>
@@ -35,10 +35,10 @@
           hx-on:htmx:after:request="this.reset();
                 document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
         <input name="name" placeholder="..." aria-required="true"/>
-        <button type="submit" class="outline">
+        <button type="submit">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset" class="outline"
+        <button type="reset"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
@@ -48,14 +48,14 @@
     <form id="edit-shopping-list-form" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
           hx-on:htmx:after:request="window.location = '/shopping-list/@ShoppingList?.Id'"> <!-- updating the shopping list name inside the select would be a hassle -->
         <input name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
-        <button type="submit" class="outline">
+        <button type="submit">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset" class="outline"  
+        <button type="reset"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-        <button type="button" class="secondary outline" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
+        <button type="button" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
                 hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-on:htmx:after:request="window.location = '/'">
             <i class="ti ti-trash"></i>
         </button>
@@ -65,15 +65,15 @@
 @if (ShoppingList is not null)
 {
     <div id="shopping-list-stage-selectors">
-        <a href="/shopping-list/@ShoppingList?.Id?stage=note" role="button" class="outline" aria-label="Note">
+        <a href="/shopping-list/@ShoppingList?.Id?stage=note" role="button" aria-label="Note">
             <i class="ti ti-pencil"></i>
             <span>NOTE</span>
         </a>
-        <a href="/shopping-list/@ShoppingList?.Id?stage=shop" role="button" class="outline" aria-label="Shop">
+        <a href="/shopping-list/@ShoppingList?.Id?stage=shop" role="button" aria-label="Shop">
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </a>
-        <button type="button" command="show-modal" commandfor="buy-dialog" class="outline" aria-label="Buy">
+        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
         </button>
@@ -94,7 +94,7 @@
         }
     </div>
 
-    <button type="submit" class="outline" aria-label="Add section"
+    <button type="submit" aria-label="Add section"
             hx-post="/htmx/shopping-list/@ShoppingList!.Id/section" hx-swap="append" hx-target="#sections">
         <i class="ti ti-plus"></i>
         <span>ADD SECTION</span>

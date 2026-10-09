@@ -17,7 +17,7 @@
                 <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
                     <i class="ti ti-x"></i>
                 </button>
-                <button type="button" class="secondary outline" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
+                <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
                         hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section">
                     <i class="ti ti-trash"></i>
                 </button>
@@ -32,7 +32,7 @@
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item" Stage="@Stage"></ItemCardComponent>
         }
     </div>
-    <button type="submit" class="outline" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
+    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
             hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
         <i class="ti ti-plus"></i>
         <span>ADD ITEM</span>
