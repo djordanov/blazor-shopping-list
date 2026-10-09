@@ -152,11 +152,11 @@
             .ToList();
     }
 
-    private async Task<IResult> Buy()
+    private async Task Buy()
     {
         if (ShoppingList is null)
         {
-            return Results.BadRequest();
+            return;
         }
         
         await using var db = await DbFactory.CreateDbContextAsync();
@@ -168,7 +168,10 @@
             item.ItemStatus = ItemStatus.Noted;
         }
         await db.SaveChangesAsync();
-
-        return Results.Redirect($"/shopping-list/{ShoppingList.Id}");
+        
+        ShoppingList = await db.ShoppingList // refresh in-scope shopping list after item attribute changes
+            .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
+            .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
+            .FirstOrDefaultAsync(sl => sl.Id == Id);
     }
 }
