@@ -180,7 +180,7 @@
             .ToListAsync();
         foreach (var item in collectedItems)
         {
-            item.ItemStatus = null;
+            item.ItemStatus = ItemStatus.Noted;
         }
         await db.SaveChangesAsync();
 

@@ -36,5 +36,5 @@
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [Parameter] public Stage Stage { get; set; } = Stage.Note;
+    [Parameter, EditorRequired] public required Stage Stage { get; set; }
 }

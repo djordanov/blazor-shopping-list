@@ -3,37 +3,44 @@
 @{
     var icon = "";
     var itemStatusPatch = ItemStatus.Noted;
+    var ariaLabel = "";
     
     switch (Stage, Item.ItemStatus)
     {
         case (Stage.Note, ItemStatus.Noted):
             icon = "ti-square-rounded";
             itemStatusPatch = ItemStatus.Planned;
+            ariaLabel = "Mark item as planned";
             break;
         case (Stage.Note, ItemStatus.Planned):
             icon = "ti-square-rounded-plus";
             itemStatusPatch = ItemStatus.Noted;
+            ariaLabel = "Mark item as noted";
             break;
+        // Stage.Shop && ItemStatus.Noted is an illegal status that doesn't have a valid visualization
         case (Stage.Shop, ItemStatus.Planned):
             icon = "ti-square-rounded-plus";
             itemStatusPatch = ItemStatus.Collected;
+            ariaLabel = "Mark item as collected";
             break;
+        case (Stage.Note, ItemStatus.Collected):
         case (Stage.Shop, ItemStatus.Collected):
             icon = "ti-square-rounded-check";
             itemStatusPatch = ItemStatus.Planned;
+            ariaLabel = "Mark item as planned";
             break;
     }
 }
 
 <button type="button" class="secondary outline" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
         hx-vals="js:{'ItemStatus': @itemStatusPatch}"
-        hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Mark item as planned">
+        hx-swap="outerHTML" hx-target="closest .item-card" aria-label="@ariaLabel">
     <i class="ti @icon"></i>
 </button>
 
 @code {
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
-    [Parameter, EditorRequired] public required Stage Stage { get; set; } = Stage.Note;
+    [Parameter, EditorRequired] public required Stage Stage { get; set; }
 }
 

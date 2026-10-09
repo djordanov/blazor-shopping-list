@@ -34,7 +34,7 @@ namespace ShoppingListApp.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("ItemStatus")
+                    b.Property<int>("ItemStatus")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")

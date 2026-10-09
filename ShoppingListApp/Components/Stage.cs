@@ -1,4 +1,4 @@
-namespace ShoppingListApp.Entities;
+namespace ShoppingListApp.Components;
 
 public enum Stage
 {

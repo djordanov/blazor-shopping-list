@@ -45,5 +45,5 @@
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [Parameter] public Stage Stage { get; set; } = Stage.Note;
+    [Parameter, EditorRequired] public required Stage Stage { get; set; }
 }
