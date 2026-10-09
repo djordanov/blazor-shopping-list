@@ -33,7 +33,7 @@
 }
 
 <button type="button" class="secondary outline" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-        hx-vals="js:{'ItemStatus': @itemStatusPatch}"
+        hx-vals="js:{'ItemStatus': '@itemStatusPatch'}"
         hx-swap="outerHTML" hx-target="closest .item-card" aria-label="@ariaLabel">
     <i class="ti @icon"></i>
 </button>

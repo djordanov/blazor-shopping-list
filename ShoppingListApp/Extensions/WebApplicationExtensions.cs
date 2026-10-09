@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using ShoppingListApp.Components;
 using ShoppingListApp.Components.Partials;
 using ShoppingListApp.Data;
 using ShoppingListApp.Entities;
@@ -10,11 +11,12 @@ namespace ShoppingListApp.Extensions;
 
 public static class WebApplicationExtensions
 {
-    private static string GetStage(HttpContext httpContext)
+    private static Stage GetStage(HttpContext httpContext)
     {
-        if (httpContext.Request.Query.TryGetValue("stage", out var stage))
+        var rawStage = "";
+        if (httpContext.Request.Query.TryGetValue("stage", out var queryStage))
         {
-            return stage.ToString();
+            rawStage = queryStage.ToString();
         }
 
         // HTMX requests do not carry the page's query string, but do send the current URL
@@ -23,11 +25,14 @@ public static class WebApplicationExtensions
             Uri.UnescapeDataString(uri.Query) is { Length: > 0 } query &&
             System.Web.HttpUtility.ParseQueryString(query)["stage"] is { Length: > 0 } htmxStage)
         {
-            return htmxStage;
+            rawStage = htmxStage;
         }
-
-        return "note";
+        
+        return Enum.TryParse<Stage>(rawStage, ignoreCase: true, out var stage)
+            ? stage 
+            : Stage.Note;
     }
+    
     extension(WebApplication app)
     {
         [UsedImplicitly]
@@ -269,6 +274,12 @@ public static class WebApplicationExtensions
                         item.Count = 0;
                     }
                 }
+                if (form.TryGetValue("ItemStatus", out var rawStatus)
+                    && Enum.TryParse<ItemStatus>(rawStatus.ToString(), ignoreCase: true, out var itemStatus))
+                {
+                    item.ItemStatus = itemStatus;
+                }
+                
                 await db.SaveChangesAsync();
 
                 return new RazorComponentResult<ItemCardComponent>(new
