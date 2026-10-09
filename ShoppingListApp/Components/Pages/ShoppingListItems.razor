@@ -20,11 +20,11 @@
     
     <!-- controls for default mode -->
     <div id="shopping-list-default-controls">
-        <button type="button" disabled="@(ShoppingList is null)"
+        <button type="button" class="secondary" disabled="@(ShoppingList is null)"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
             <i class="ti ti-edit"></i>
         </button> 
-        <button type="button" aria-label="Add shopping list"
+        <button type="button" class="secondary" aria-label="Add shopping list"
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
             <i class="ti ti-plus"></i>
         </button>
@@ -95,34 +95,9 @@
         <span>ADD SECTION</span>
     </button>
     
-    <dialog id="buy-dialog" closedby="any">
+    <dialog id="buy-dialog" closedby="any" hx-get="/htmx/shopping-list/@ShoppingList.Id/buy" hx-target="#buy-dialog > article">
         <article>
-            <form method="post" action="/shopping-list/@Id" @formname="buy-form" @onsubmit="Buy">
-                <b>Are you sure you bought the following items?</b>
-                <p>The purchase of all collected items will be recorded and your shopping list reset for next time</p>
-                @foreach (var section in ShoppingList.Sections)
-                {
-                    var items = ShoppingList.ListItems
-                        .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
-                        .ToList();
-                    if (items.Count > 0)
-                    {
-                        <strong>@section.Name</strong>
-                        <ul>
-                        @foreach (var item in items)
-                        {
-                            <li>@item.Count @item.Name</li>
-                        }   
-                        </ul>
-                    }
-                }
-                <AntiforgeryToken></AntiforgeryToken>
-                
-                <button type="submit">
-                    <i class="ti ti-check"></i>
-                    <span>DONE</span>
-                </button>
-            </form>
+            <p>Loading ...</p>
         </article>
     </dialog>
 }
@@ -150,28 +125,5 @@
             .Where(i => i.SectionId == null)
             .OrderBy(i => i.SortOrder)
             .ToList();
-    }
-
-    private async Task Buy()
-    {
-        if (ShoppingList is null)
-        {
-            return;
-        }
-        
-        await using var db = await DbFactory.CreateDbContextAsync();
-        var collectedItems = await db.Item
-            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
-            .ToListAsync();
-        foreach (var item in collectedItems)
-        {
-            item.ItemStatus = ItemStatus.Noted;
-        }
-        await db.SaveChangesAsync();
-        
-        ShoppingList = await db.ShoppingList // refresh in-scope shopping list after item attribute changes
-            .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
-            .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
-            .FirstOrDefaultAsync(sl => sl.Id == Id);
     }
 }

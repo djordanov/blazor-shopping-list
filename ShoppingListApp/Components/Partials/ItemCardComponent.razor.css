@@ -29,6 +29,10 @@ form span {
     display: none;
 }
 
+.item-card[data-mode="edit"] .item-count-stepper {
+    display: none;
+}
+
 .item-card[data-mode="default"] span.item-name,
 .item-card[data-mode="edit"] input.item-name {
     display: revert;
