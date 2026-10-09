@@ -13,13 +13,13 @@
             ariaLabel = "Mark item as planned";
             break;
         case (Stage.Note, ItemStatus.Planned):
-            icon = "ti-square-rounded-plus";
+            icon = "ti-square-rounded-minus";
             itemStatusPatch = ItemStatus.Noted;
             ariaLabel = "Mark item as noted";
             break;
         // Stage.Shop && ItemStatus.Noted is an illegal status that doesn't have a valid visualization
         case (Stage.Shop, ItemStatus.Planned):
-            icon = "ti-square-rounded-plus";
+            icon = "ti-square-rounded-minus";
             itemStatusPatch = ItemStatus.Collected;
             ariaLabel = "Mark item as collected";
             break;

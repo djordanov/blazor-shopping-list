@@ -87,11 +87,6 @@
         {
             <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems" Stage="@Stage"></SectionComponent>
         }
-
-        @if (ItemsWithoutSection.Any())
-        {
-            <SectionComponent ShoppingListId="(Guid)Id!" Items="(ShoppingList?.ListItems ?? []).Where(i => i.Section == null).ToList()" Stage="@Stage"></SectionComponent>
-        }
     </div>
 
     <button type="submit" aria-label="Add section"
@@ -104,7 +99,7 @@
         <article>
             <form method="post" action="/shopping-list/@Id" @formname="buy-form" @onsubmit="Buy">
                 <b>Are you sure you bought the following items?</b>
-                <p>The purchase of all collected will be recorded and your shopping list reset for next time</p>
+                <p>The purchase of all collected items will be recorded and your shopping list reset for next time</p>
                 @foreach (var section in ShoppingList.Sections)
                 {
                     var items = ShoppingList.ListItems
@@ -120,17 +115,6 @@
                         }   
                         </ul>
                     }
-                }
-                
-                @if(ShoppingList.ListItems.Exists(i => i.SectionId == null && i.ItemStatus == ItemStatus.Collected))
-                {
-                    <strong>Additional</strong>
-                    <ul>
-                    @foreach (var item in ShoppingList.ListItems.Where(i => i.SectionId == null && i.ItemStatus == ItemStatus.Collected))
-                    {
-                        <li>@item.Count @item.Name</li>
-                    }
-                    </ul>
                 }
                 <AntiforgeryToken></AntiforgeryToken>
                 
