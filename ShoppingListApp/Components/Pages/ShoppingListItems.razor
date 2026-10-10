@@ -65,14 +65,12 @@
 @if (ShoppingList is not null)
 {
     <div id="shopping-list-stage-selectors">
-        <a href="/shopping-list/@ShoppingList?.Id?stage=@(nameof(Stage.Note))" role="button" aria-label="Note">
-            <i class="ti ti-pencil"></i>
-            <span>NOTE</span>
-        </a>
-        <a href="/shopping-list/@ShoppingList?.Id?stage=@(nameof(Stage.Shop))" role="button" aria-label="Shop">
+        <button type="button" aria-label="Shop"
+                onclick="document.getElementById('shopping-list-body').toggleAttribute('data-shopping-view');
+                    this.toggleAttribute('aria-pressed')">
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
-        </a>
+        </button>
         <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy"
                 hx-get="/htmx/shopping-list/@ShoppingList?.Id/buy" hx-target="#buy-dialog > article" hx-swap="innerHTML">
             <i class="ti ti-credit-card"></i>
@@ -83,25 +81,26 @@
 
 @if(ShoppingList is not null)
 {
-    <div id="sections">
-        @foreach (var section in ShoppingList?.Sections ?? [])
-        {
-            <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems" Stage="@Stage"></SectionComponent>
-        }
+    <div id="shopping-list-body">
+        <div id="sections">
+            @foreach (var section in ShoppingList?.Sections ?? [])
+            {
+                <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems" Stage="@Stage"></SectionComponent>
+            }
+        </div>
+        <button type="submit" aria-label="Add section"
+                hx-post="/htmx/shopping-list/@ShoppingList!.Id/section" hx-swap="append" hx-target="#sections">
+            <i class="ti ti-plus"></i>
+            <span>ADD SECTION</span>
+        </button>
     </div>
-
-    <button type="submit" aria-label="Add section"
-            hx-post="/htmx/shopping-list/@ShoppingList!.Id/section" hx-swap="append" hx-target="#sections">
-        <i class="ti ti-plus"></i>
-        <span>ADD SECTION</span>
-    </button>
-    
     <dialog id="buy-dialog" closedby="any">
         <article>
             <p>Loading ...</p>
         </article>
     </dialog>
 }
+
 
 @code {
     [Parameter] public Guid? Id { get; set; }

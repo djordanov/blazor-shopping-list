@@ -28,3 +28,7 @@ header[data-mode="edit"] .section-edit-form input {
     flex-grow: 1;
 }
 
+#shopping-list-body[data-shopping-view] .section > button {
+    display: none;
+}
+

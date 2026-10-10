@@ -35,3 +35,7 @@
 #shopping-list-stage-selectors {
     margin-bottom: 4rem;
 }
+
+#shopping-list-body[data-shopping-view] > button {
+    display: none;
+}
