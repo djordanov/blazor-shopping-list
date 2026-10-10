@@ -1,14 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ShoppingListApp.Entities;
 
 namespace ShoppingListApp.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<ShoppingList> ShoppingList { get; set; } = default!;
-    public DbSet<Section> Section { get; set; } = default!;
-    public DbSet<Item> Item { get; set; } = default!;
+    public DbSet<ShoppingList> ShoppingList { get; set; }
+    public DbSet<Section> Section { get; set; }
+    public DbSet<Item> Item { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,11 +18,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity
                 .HasOne(i => i.ShoppingList)
                 .WithMany(sl => sl.ListItems)
-                .HasForeignKey(i => i.ShoppingListId);
+                .HasForeignKey(i => i.ShoppingListId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity
                 .HasOne(i => i.Section)
                 .WithMany(s => s.ListItems)
-                .HasForeignKey(i => i.SectionId);
+                .HasForeignKey(i => i.SectionId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ShoppingList>()

@@ -42,7 +42,7 @@ namespace ShoppingListApp.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<Guid?>("SectionId")
+                    b.Property<Guid>("SectionId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ShoppingListId")
@@ -119,7 +119,9 @@ namespace ShoppingListApp.Migrations
                 {
                     b.HasOne("ShoppingListApp.Entities.Section", "Section")
                         .WithMany("ListItems")
-                        .HasForeignKey("SectionId");
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ShoppingListApp.Entities.ShoppingList", "ShoppingList")
                         .WithMany("ListItems")

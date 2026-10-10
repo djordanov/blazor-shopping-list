@@ -139,9 +139,9 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapSectionEndpoints()
         {
-            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid?}/sort",
+            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}/sort",
                 // ReSharper disable once UnusedParameter.Local
-                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid? sectionId) =>
+                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid sectionId) =>
                 {
                     await using var db = await dbFactory.CreateDbContextAsync();
                     var form = await httpContext.Request.ReadFormAsync();
@@ -248,7 +248,7 @@ public static class WebApplicationExtensions
                 var name = form.TryGetValue("Name", out var rawName) ? rawName.ToString() : "";
                 var sectionId = Guid.TryParse(form["SectionId"], out var parsedSectionId)
                     ? parsedSectionId
-                    : (Guid?)null;
+                    : throw new InvalidOperationException();
                 
                 var item = new Item
                 {
