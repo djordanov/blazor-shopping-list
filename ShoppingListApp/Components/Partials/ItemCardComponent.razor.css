@@ -44,6 +44,10 @@ form > button {
     display: revert;
 }
 
-.item-card.is-collected ::deep span {
+.item-card[data-status="Collected"] ::deep span {
     text-decoration: line-through;
+}
+
+#shopping-list-body[data-shopping-view] .item-card[data-status="Noted"] {
+    display: none;
 }
