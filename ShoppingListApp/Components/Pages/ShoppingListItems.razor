@@ -34,7 +34,7 @@
     <form id="add-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
           hx-on:htmx:after:request="this.reset();
                 document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
-        <input name="name" placeholder="..." aria-required="true"/>
+        <input name="name" placeholder="Supermarket" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
         </button>
@@ -82,7 +82,7 @@
 @if(ShoppingList is not null)
 {
     <div id="shopping-list-body">
-        <div id="sections" class="sortable"
+        <div id="sections"
              hx-trigger="end" hx-swap="none"
              hx-post="/htmx/shopping-list/@Id/sort">
             @foreach (var section in ShoppingList?.Sections ?? [])

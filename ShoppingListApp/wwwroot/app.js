@@ -9,18 +9,28 @@ document.addEventListener('click', (event) => {
 });
 
 htmx.onLoad( content => {
-    let sections = document.querySelectorAll('.sortable')
-    sections.forEach(section => {
-        // skip already sortable sections
-        if (section.dataset.sortable) {
-            return;
-        }
-        section.dataset.sortable = 'true';
-        
-        new Sortable(section, {
+    let sectionsContainer = document.querySelector('#sections');
+    if (!sectionsContainer.dataset.sortable) {
+        sectionsContainer.dataset.sortable = 'true';
+        new Sortable(sectionsContainer, {
             handle: '.sortable-handler',
             animation: 150,
-            group: 'shared'
+            group: 'sections'
+        })    
+    }
+    
+    let itemsContainers = document.querySelectorAll('.items')
+    itemsContainers.forEach(itemsContainer => {
+        // skip already sortable sections
+        if (itemsContainer.dataset.sortable) {
+            return;
+        }
+        itemsContainer.dataset.sortable = 'true';
+        
+        new Sortable(itemsContainer, {
+            handle: '.sortable-handler',
+            animation: 150,
+            group: 'items'
         })
     })
 })

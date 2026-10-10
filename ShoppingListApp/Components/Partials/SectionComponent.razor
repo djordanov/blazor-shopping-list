@@ -1,31 +1,31 @@
 @using ShoppingListApp.Entities
 
-<article class="section sortable-handler">
+<article class="section">
     <input type="hidden" name="Section.Id" value="@Section.Id"/>
     <header data-mode="@Mode">
-            <!-- default mode -->
-            <span onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
+        <!-- default mode -->
+        <span class="sortable-handler" onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
 
-            <!-- controls for edit mode -->
-            <form class="section-edit-form"
-                  hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
-                <input type="text" name="Section.Name" value="@Section.Name"/>
-                <button type="submit">
-                    <i class="ti ti-check"></i>
-                </button>
-                <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
-                    <i class="ti ti-x"></i>
-                </button>
-                <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
-                        hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section">
-                    <i class="ti ti-trash"></i>
-                </button>
-            </form>
-        </header>
+        <!-- controls for edit mode -->
+        <form class="section-edit-form"
+              hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
+            <input type="text" name="Section.Name" value="@Section.Name"/>
+            <button type="submit">
+                <i class="ti ti-check"></i>
+            </button>
+            <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
+                <i class="ti ti-x"></i>
+            </button>
+            <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
+                    hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section">
+                <i class="ti ti-trash"></i>
+            </button>
+        </form>
+    </header>
 
-    <div id="section-@Section?.Id-items" class="sortable"
+    <div id="section-@Section.Id-items" class="items"
          hx-trigger="end" hx-swap="none"
-         hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
+         hx-post="/htmx/shopping-list/@ShoppingListId/section/@Section.Id/sort">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
