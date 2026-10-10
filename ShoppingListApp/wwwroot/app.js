@@ -15,7 +15,8 @@ htmx.onLoad( _ => {
         new Sortable(sectionsContainer, {
             handle: '.sortable-handler',
             animation: 150,
-            group: 'sections'
+            group: 'sections',
+            onEnd: (event) => htmx.trigger(event.to, 'section-sort')
         })    
     }
     
