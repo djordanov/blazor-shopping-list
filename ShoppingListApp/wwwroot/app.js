@@ -18,9 +18,9 @@ htmx.onLoad( content => {
         section.dataset.sortable = 'true';
         
         new Sortable(section, {
-            handle: '.item-name',
+            handle: '.sortable-handler',
             animation: 150,
             group: 'shared'
         })
-    })  
+    })
 })

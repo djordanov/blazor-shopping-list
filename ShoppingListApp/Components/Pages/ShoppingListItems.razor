@@ -82,7 +82,9 @@
 @if(ShoppingList is not null)
 {
     <div id="shopping-list-body">
-        <div id="sections">
+        <div id="sections" class="sortable"
+             hx-trigger="end" hx-swap="none"
+             hx-post="/htmx/shopping-list/@Id/sort">
             @foreach (var section in ShoppingList?.Sections ?? [])
             {
                 <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
@@ -114,7 +116,7 @@
         AllShoppingLists = await db.ShoppingList.OrderBy(sl => sl.Name).ToListAsync();
         
         ShoppingList = await db.ShoppingList
-            .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
+            .Include(sl => sl.Sections.OrderBy(s => s.SortOrder))
             .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
             .FirstOrDefaultAsync(sl => sl.Id == Id);
     }

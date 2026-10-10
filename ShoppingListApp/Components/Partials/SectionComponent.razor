@@ -1,15 +1,14 @@
 @using ShoppingListApp.Entities
 
-<article class="section">
-    @if (Section is not null)
-    {   
-        <header data-mode="@Mode">
+<article class="section sortable-handler">
+    <input type="hidden" name="Section.Id" value="@Section.Id"/>
+    <header data-mode="@Mode">
             <!-- default mode -->
             <span onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
-            
+
             <!-- controls for edit mode -->
             <form class="section-edit-form"
-                hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
+                  hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
                 <input type="text" name="Section.Name" value="@Section.Name"/>
                 <button type="submit">
                     <i class="ti ti-check"></i>
@@ -23,7 +22,7 @@
                 </button>
             </form>
         </header>
-    }
+
     <div id="section-@Section?.Id-items" class="sortable"
          hx-trigger="end" hx-swap="none"
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
@@ -32,17 +31,17 @@
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
     </div>
-    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
-            hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section?.Id-items">
+    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section.Id'}"
+            hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section.Id-items">
         <i class="ti ti-plus"></i>
         <span>ADD ITEM</span>
     </button>
-    
+
 </article>
 
 @code {
-    [Parameter] public Guid ShoppingListId { get; set; }
-    [Parameter] public Section? Section { get; set; }
-    [Parameter] public required List<Item> Items { get; set; }
+    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
+    [Parameter, EditorRequired] public required Section Section { get; set; }
+    [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
 }

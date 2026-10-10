@@ -1,6 +1,6 @@
 @using ShoppingListApp.Entities
 
-<div class="item-card" data-mode="@Mode" data-status="@Item.ItemStatus"
+<div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus"
      hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-trigger="end" hx-swap="none">
     
     <!-- for POST by sortable -->
