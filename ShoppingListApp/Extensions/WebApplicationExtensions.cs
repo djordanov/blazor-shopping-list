@@ -11,28 +11,6 @@ namespace ShoppingListApp.Extensions;
 
 public static class WebApplicationExtensions
 {
-    private static Stage GetStage(HttpContext httpContext)
-    {
-        var rawStage = "";
-        if (httpContext.Request.Query.TryGetValue("stage", out var queryStage))
-        {
-            rawStage = queryStage.ToString();
-        }
-
-        // HTMX requests do not carry the page's query string, but do send the current URL
-        if (httpContext.Request.Headers.TryGetValue("HX-Current-URL", out var currentUrl) &&
-            Uri.TryCreate(currentUrl.ToString(), UriKind.Absolute, out var uri) &&
-            Uri.UnescapeDataString(uri.Query) is { Length: > 0 } query &&
-            System.Web.HttpUtility.ParseQueryString(query)["stage"] is { Length: > 0 } htmxStage)
-        {
-            rawStage = htmxStage;
-        }
-        
-        return Enum.TryParse<Stage>(rawStage, ignoreCase: true, out var stage)
-            ? stage 
-            : Stage.Note;
-    }
-    
     extension(WebApplication app)
     {
         [UsedImplicitly]
@@ -183,7 +161,6 @@ public static class WebApplicationExtensions
                     ShoppingListId = shoppingListId,
                     Section = section,
                     Mode = "edit",
-                    Stage = GetStage(httpContext),
                     Items = new List<Item>()
                 });
             });
@@ -228,7 +205,6 @@ public static class WebApplicationExtensions
                     ShoppingListId = shoppingListId,
                     Section = section,
                     Mode = "default",
-                    Stage = GetStage(httpContext),
                     Items = section.ListItems
                 });
             });
@@ -261,8 +237,7 @@ public static class WebApplicationExtensions
                 {
                     ShoppingListId = shoppingListId,
                     Item = item,
-                    Mode = "edit",
-                    Stage = GetStage(httpContext)
+                    Mode = "edit"
                 });
             });
             
@@ -316,8 +291,7 @@ public static class WebApplicationExtensions
                 return new RazorComponentResult<ItemCardComponent>(new
                 {
                     ShoppingListId = shoppingListId,
-                    Item = item,
-                    Stage = GetStage(httpContext)
+                    Item = item
                 });
             });
         

@@ -8,7 +8,7 @@
     
     <form hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
           hx-target="closest .item-card" hx-swap="outerHTML">
-        <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item" Stage="@Stage"></ItemStatusButton>
+        <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item"></ItemStatusButton>
         <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
         <input class="item-name" type="text" name="Name" value="@Item.Name"/>
         <button type="submit">
@@ -29,5 +29,6 @@
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [Parameter, EditorRequired] public required Stage Stage { get; set; }
+
+
 }

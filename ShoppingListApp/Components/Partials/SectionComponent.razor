@@ -27,10 +27,9 @@
     <div id="section-@Section?.Id-items" class="sortable"
          hx-trigger="end" hx-swap="none"
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@(Section?.Id ?? null)/sort">
-        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id 
-            && (Stage != Stage.Shop || i.ItemStatus == ItemStatus.Planned || i.ItemStatus == ItemStatus.Collected)))
+        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {
-            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item" Stage="@Stage"></ItemCardComponent>
+            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
     </div>
     <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section?.Id'}"
@@ -46,5 +45,4 @@
     [Parameter] public Section? Section { get; set; }
     [Parameter] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [Parameter, EditorRequired] public required Stage Stage { get; set; }
 }

@@ -86,7 +86,7 @@
         <div id="sections">
             @foreach (var section in ShoppingList?.Sections ?? [])
             {
-                <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems" Stage="@Stage"></SectionComponent>
+                <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
             }
         </div>
         <button type="submit" aria-label="Add section"
@@ -107,9 +107,6 @@
     [Parameter] public Guid? Id { get; set; }
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
-    private List<Item> ItemsWithoutSection { get; set; } = [];
-    [SupplyParameterFromQuery(Name = "stage")] string? StageParameter { get; set; }
-    private Stage Stage => Enum.TryParse<Stage>(StageParameter, ignoreCase: true, out var stage) ? stage : Stage.Note;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -121,10 +118,5 @@
             .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
             .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
             .FirstOrDefaultAsync(sl => sl.Id == Id);
-
-        ItemsWithoutSection = (ShoppingList?.ListItems ?? [])
-            .Where(i => i.SectionId == null)
-            .OrderBy(i => i.SortOrder)
-            .ToList();
     }
 }
