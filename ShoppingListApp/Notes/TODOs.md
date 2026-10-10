@@ -6,25 +6,21 @@
 4. WASM
 5. WASM + something for live updates
 
-# Functionality
+# Plain SSR templating + HTMX so far
 
-### ShoppingList
+## TODOs
 
-1. Display: Plain table
-2. Add new: Plain form on same site as the table → add button inserts an empty row in edit more into bottom of table
-3. Delete: Delete button → DELETE to /shopping-list/<id> → 204 No Content
-4. Edit: Edit button → turns row editable?
++ add auth & auth
++ add CSRF middleware
 
-### Do Later
+## Do Maybe
 
-* add anti CSRF middleware
+* notifications on changes
+* notifications with undo option on changes
+* refactor HTMX minimal endpoints to extract common code
+* change entity relationships to make item.section officially required 
 
-### Items
+## Won't Do
 
-URL: /shopping-list/<id> displays both sections and items
-
-API-/ HTMX-URLS: /shopping-list/<id>/section and /shopping-list/<id>/item
-
-Stretch: 
-- user-defined sort order?
-- comments or additional information on table?
+- user-notes and user-pictures on items
+- sharing
