@@ -17,8 +17,14 @@
 
 * notifications on changes
 * notifications with undo option on changes
+* collected items count on buy button
 * refactor HTMX minimal endpoints to extract common code
-* change entity relationships to make item.section officially required 
+* change entity relationships to make item.section officially required
+
+## Known Edge Cases
+
+* creating a section/ and item persists an empty section/ item 
+* clicking on a collected item in the shopping view changes it into a noted item and it disappears from the shopping view
 
 ## Won't Do
 
