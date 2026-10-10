@@ -45,8 +45,7 @@
     </form>
     
     <!-- controls for edit mode -->
-    <form id="edit-shopping-list-form" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none"
-          hx-on:htmx:after:request="window.location = '/shopping-list/@ShoppingList?.Id'"> <!-- updating the shopping list name inside the select would be a hassle -->
+    <form id="edit-shopping-list-form" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none">
         <input name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
@@ -56,7 +55,7 @@
             <i class="ti ti-x"></i>
         </button>
         <button type="button" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
-                hx-delete="/htmx/shopping-list/@ShoppingList?.Id" hx-on:htmx:after:request="window.location = '/'">
+                hx-delete="/htmx/shopping-list/@ShoppingList?.Id">
             <i class="ti ti-trash"></i>
         </button>
     </form>

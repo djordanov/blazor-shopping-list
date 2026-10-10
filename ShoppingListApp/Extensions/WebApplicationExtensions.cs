@@ -70,7 +70,7 @@ public static class WebApplicationExtensions
                 });
             });
             
-            app.MapDelete("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
+            app.MapDelete("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
             {
                 await using var db = await dbFactory.CreateDbContextAsync();
                 var shoppingList = await db.ShoppingList.FindAsync(id);
@@ -81,10 +81,9 @@ public static class WebApplicationExtensions
 
                 db.ShoppingList.Remove(shoppingList);
                 await db.SaveChangesAsync();
-    
-                // one could argue for 204 NoContent instead of 200 Ok
-                // however, this is primarily for HTMX and HTMX ignores 204 NoContent
-                return Results.Ok(); 
+                
+                httpContext.Response.Headers["HX-Redirect"] = "/shopping-list";
+                return Results.NoContent(); 
             });
             
             app.MapPatch("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
@@ -104,6 +103,7 @@ public static class WebApplicationExtensions
                     shoppingList.Name = rawName.ToString();
                     await db.SaveChangesAsync();
 
+                    httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{shoppingList.Id}";
                     return Results.Ok();
                 });
 
