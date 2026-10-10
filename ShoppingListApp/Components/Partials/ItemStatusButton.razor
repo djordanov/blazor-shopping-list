@@ -1,34 +1,29 @@
 @using ShoppingListApp.Entities
 
 @{
-    var icon = "";
-    var itemStatusPatch = ItemStatus.Noted;
-    var ariaLabel = "";
+    string icon;
+    ItemStatus itemStatusPatch;
+    string ariaLabel;
     
-    switch (Stage, Item.ItemStatus)
+    switch (Item.ItemStatus)
     {
-        case (Stage.Note, ItemStatus.Noted):
+        case ItemStatus.Noted:
             icon = "ti-square-rounded";
             itemStatusPatch = ItemStatus.Planned;
             ariaLabel = "Mark item as planned";
             break;
-        case (Stage.Note, ItemStatus.Planned):
-            icon = "ti-square-rounded-minus";
-            itemStatusPatch = ItemStatus.Noted;
-            ariaLabel = "Mark item as noted";
-            break;
-        // Stage.Shop && ItemStatus.Noted is an illegal status that doesn't have a valid visualization
-        case (Stage.Shop, ItemStatus.Planned):
+        case ItemStatus.Planned:
             icon = "ti-square-rounded-minus";
             itemStatusPatch = ItemStatus.Collected;
             ariaLabel = "Mark item as collected";
             break;
-        case (Stage.Note, ItemStatus.Collected):
-        case (Stage.Shop, ItemStatus.Collected):
+        case ItemStatus.Collected:
             icon = "ti-square-rounded-check";
-            itemStatusPatch = ItemStatus.Planned;
-            ariaLabel = "Mark item as planned";
+            itemStatusPatch = ItemStatus.Noted;
+            ariaLabel = "Mark item as noted";
             break;
+        default:
+            throw new ArgumentOutOfRangeException();
     }
 }
 
