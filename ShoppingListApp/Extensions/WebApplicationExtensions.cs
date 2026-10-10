@@ -246,9 +246,10 @@ public static class WebApplicationExtensions
                 await using var db = await dbFactory.CreateDbContextAsync();
                 var form = await httpContext.Request.ReadFormAsync();
                 var name = form.TryGetValue("Name", out var rawName) ? rawName.ToString() : "";
-                var sectionId = Guid.TryParse(form["SectionId"], out var parsedSectionId)
-                    ? parsedSectionId
-                    : throw new InvalidOperationException();
+                if (!Guid.TryParse(form["SectionId"], out var sectionId))
+                {
+                    return Results.NotFound();
+                }
                 
                 var item = new Item
                 {
