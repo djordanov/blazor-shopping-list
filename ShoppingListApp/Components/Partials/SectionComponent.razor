@@ -24,7 +24,7 @@
     </header>
 
     <div id="section-@Section.Id-items" class="items"
-         hx-trigger="end" hx-swap="none"
+         hx-trigger="end consume" hx-swap="none"
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@Section.Id/sort">
         @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
         {

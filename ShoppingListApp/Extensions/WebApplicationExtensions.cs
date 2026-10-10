@@ -19,29 +19,30 @@ public static class WebApplicationExtensions
             app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/sort",
                 // ReSharper disable once UnusedParameter.Local
                 async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
-                {
-                    await using var db = await dbFactory.CreateDbContextAsync();
-                    var form = await httpContext.Request.ReadFormAsync();
-                    form.TryGetValue("Section.Id", out var rawIds);
-                    var ids = rawIds
-                        .Select(idString => Guid.TryParse(idString, out var id) ? id : Guid.Empty)
-                        .Where(id => id != Guid.Empty)
-                        .ToList(); // need to preserve sort order
+            {
+                await using var db = await dbFactory.CreateDbContextAsync();
+                var form = await httpContext.Request.ReadFormAsync();
+                form.TryGetValue("Section.Id", out var rawIds);
+                var ids = rawIds
+                    .Select(idString => Guid.TryParse(idString, out var id) ? id : Guid.Empty)
+                    .Where(id => id != Guid.Empty)
+                    .ToList(); // need to preserve sort order
 
-                    var sections = await db.Section
-                        .Where(section => ids.Contains(section.Id))
-                        .ToListAsync();
-                    var i = 0;
-                    foreach (var sectionId in ids)
-                    {
-                        var section = sections.First(section => section.Id == sectionId); // bit roundabout to preserve sort order
-                        section.SortOrder = i;
-                        i++;
-                    }
-                    
-                    await db.SaveChangesAsync();
-                    return Results.Ok();
-                });
+                var sections = await db.Section
+                    .Where(section => ids.Contains(section.Id))
+                    .ToListAsync();
+                var i = 0;
+                foreach (var sectionId in ids)
+                {
+                    var section = sections.First(section => section.Id == sectionId); // bit roundabout to preserve sort order
+                    section.SortOrder = i;
+                    i++;
+                }
+                
+                await db.SaveChangesAsync();
+                return Results.Ok();
+            });
+            
             app.MapGet("/htmx/shopping-list/{id:Guid}/buy", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
             {
                 await using var db = await dbFactory.CreateDbContextAsync();

@@ -8,7 +8,7 @@ document.addEventListener('click', (event) => {
     });
 });
 
-htmx.onLoad( content => {
+htmx.onLoad( _ => {
     let sectionsContainer = document.querySelector('#sections');
     if (!sectionsContainer.dataset.sortable) {
         sectionsContainer.dataset.sortable = 'true';
