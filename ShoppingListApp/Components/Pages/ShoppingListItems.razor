@@ -7,7 +7,7 @@
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
 
-<PageTitle>@ShoppingList?.Name</PageTitle>
+<PageTitle>@ShoppingList?.Name ?? ShoppingList</PageTitle>
 
 <div id="shopping-list-header" data-mode="default">
     <select id="shopping-list-select" onchange="window.location = this.value">
