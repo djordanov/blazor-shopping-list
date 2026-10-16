@@ -72,30 +72,6 @@ public static class WebApplicationExtensions
                 await db.SaveChangesAsync();
                 httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{id}";
             });
-
-            app.MapPost("/htmx/shopping-list", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var form = await httpContext.Request.ReadFormAsync();
-                var name = form["name"].ToString();
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    return Results.BadRequest();
-                }
-
-                var shoppingList = new ShoppingList
-                {
-                    Name = name
-                };
-    
-                db.ShoppingList.Add(shoppingList);
-                await db.SaveChangesAsync();
-                return new RazorComponentResult<ShoppingListOptionComponent>(new
-                {
-                    ShoppingList = shoppingList,
-                    IsSelected = false
-                });
-            });
             
             app.MapDelete("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
             {

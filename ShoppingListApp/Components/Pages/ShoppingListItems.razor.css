@@ -14,7 +14,7 @@
 
 #shopping-list-select,
 #shopping-list-default-controls,
-#add-shopping-list-form,
+#AddShoppingListForm,
 #edit-shopping-list-form {
     display: none;
 }
@@ -25,7 +25,7 @@
 }
 
 #shopping-list-header[data-mode="default"] #shopping-list-select,
-#shopping-list-header[data-mode="add"] #add-shopping-list-form,
+#shopping-list-header[data-mode="add"] #AddShoppingListForm,
 #shopping-list-header[data-mode="edit"] #edit-shopping-list-form {
     display: flex;
     gap: 0.5rem;

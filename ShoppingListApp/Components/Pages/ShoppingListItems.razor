@@ -7,7 +7,7 @@
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
 
-<PageTitle>@ShoppingList?.Name ?? ShoppingList</PageTitle>
+<PageTitle>@(ShoppingList?.Name ?? "Shopping List")</PageTitle>
 
 <div id="shopping-list-header" data-mode="default">
     <select id="shopping-list-select" onchange="window.location = this.value">
@@ -31,10 +31,9 @@
     </div>
     
     <!-- controls for add mode -->
-    <form id="add-shopping-list-form" hx-post="/htmx/shopping-list" hx-swap="append" hx-target="select"
-          hx-on:htmx:after:request="this.reset();
-                document.getElementById('shopping-list-header').setAttribute('data-mode', 'default');">
-        <input name="name" placeholder="Supermarket" aria-required="true"/>
+    <form id="AddShoppingListForm" method="post"
+          @formname="AddShoppingListForm" @onsubmit="AddShoppingList">
+        <input name="NewListName" placeholder="Supermarket" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
         </button>
@@ -42,6 +41,7 @@
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
+        <AntiforgeryToken></AntiforgeryToken>
     </form>
     
     <!-- controls for edit mode -->
@@ -109,15 +109,37 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
 
+    [SupplyParameterFromForm(FormName="AddShoppingListForm")] private string? NewListName { get; init; } 
+    
     protected override async Task OnParametersSetAsync()
     {
         await using var db = await DbFactory.CreateDbContextAsync();
 
-        AllShoppingLists = await db.ShoppingList.OrderBy(sl => sl.Name).ToListAsync();
+        AllShoppingLists = await db.ShoppingList.AsNoTracking().OrderBy(sl => sl.Name).ToListAsync();
         
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections.OrderBy(s => s.SortOrder))
             .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
             .FirstOrDefaultAsync(sl => sl.Id == Id);
+    }
+
+    private async Task AddShoppingList()
+    {
+        if (string.IsNullOrWhiteSpace(NewListName))
+        {
+            throw new InvalidOperationException();
+        }
+        
+        var shoppingList = new ShoppingList
+        {
+            Name = NewListName
+        };
+    
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.ShoppingList.Add(shoppingList);
+        await db.SaveChangesAsync();
+        
+        AllShoppingLists.Add(shoppingList);
+        AllShoppingLists = AllShoppingLists.OrderBy(sl => sl.Name).ToList();
     }
 }
