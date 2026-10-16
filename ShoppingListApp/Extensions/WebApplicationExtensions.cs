@@ -43,36 +43,6 @@ public static class WebApplicationExtensions
                 return Results.Ok();
             });
             
-            app.MapGet("/htmx/shopping-list/{id:Guid}/buy", async (IDbContextFactory<AppDbContext> dbFactory, Guid id) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var shoppingList = await db.ShoppingList
-                    .Include(sl => sl.Sections.OrderBy(s => s.CreatedAt))
-                    .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
-                    .FirstOrDefaultAsync(sl => sl.Id == id);
-                
-                return new RazorComponentResult<BuyModalComponent>(new
-                {
-                    ShoppingList = shoppingList
-                });
-            });
-            
-            app.MapPost("/htmx/shopping-list/{id:Guid}/buy", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-        
-                var collectedItems = await db.Item
-                    .Where(i => i.ShoppingListId == id && i.ItemStatus == ItemStatus.Collected)
-                    .ToListAsync();
-                foreach (var item in collectedItems)
-                {
-                    item.ItemStatus = ItemStatus.Noted;
-                }
-
-                await db.SaveChangesAsync();
-                httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{id}";
-            });
-            
             return app;
         }
 

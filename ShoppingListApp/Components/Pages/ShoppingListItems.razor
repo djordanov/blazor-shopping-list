@@ -78,8 +78,7 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </button>
-        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy"
-                hx-get="/htmx/shopping-list/@ShoppingList?.Id/buy" hx-target="#buy-dialog > article" hx-swap="innerHTML">
+        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
         </button>
@@ -105,7 +104,7 @@
     </div>
     <dialog id="buy-dialog" closedby="any">
         <article>
-            <p>Loading ...</p>
+            <BuyModalComponent ShoppingList="ShoppingList"></BuyModalComponent>
         </article>
     </dialog>
 }
@@ -123,7 +122,11 @@
     {
         await using var db = await DbFactory.CreateDbContextAsync();
 
-        AllShoppingLists = await db.ShoppingList.AsNoTracking().OrderBy(sl => sl.Name).ToListAsync();
+        AllShoppingLists = await db.ShoppingList
+            .AsNoTracking()
+            .Include(sl => sl.Sections.OrderBy(s => s.SortOrder))
+            .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
+            .OrderBy(sl => sl.Name).ToListAsync();
         
         ShoppingList = await db.ShoppingList
             .Include(sl => sl.Sections.OrderBy(s => s.SortOrder))

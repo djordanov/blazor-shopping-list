@@ -2,8 +2,9 @@
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager NavigationManager
 
-<form hx-post="/htmx/shopping-list/@ShoppingList.Id/buy" hx-swap="none">
+<form @formname="BuyForm" @onsubmit="Buy" method="post">
     <b>Are you sure you bought the following items?</b>
     <p>Your shopping list will be reset for the next trip!</p>
     @foreach (var section in ShoppingList?.Sections ?? [])
@@ -27,8 +28,25 @@
         <i class="ti ti-check"></i>
         <span>DONE</span>
     </button>
+    <AntiforgeryToken></AntiforgeryToken>
 </form>
 
 @code {
     [Parameter, EditorRequired] public ShoppingList ShoppingList { get; init; }
+
+    private async Task Buy()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        
+        var collectedItems = await db.Item
+            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
+            .ToListAsync();
+        foreach (var item in collectedItems)
+        {
+            item.ItemStatus = ItemStatus.Noted;
+        }
+
+        await db.SaveChangesAsync();
+        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
+    }
 }
