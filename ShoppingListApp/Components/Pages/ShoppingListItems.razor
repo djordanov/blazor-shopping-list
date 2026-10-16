@@ -32,7 +32,7 @@
     </div>
     
     <!-- controls for add mode -->
-    <form id="AddShoppingListForm" method="post"
+    <form id="add-shopping-list-form" method="post"
           @formname="AddShoppingListForm" @onsubmit="AddShoppingList">
         <input name="NewListName" placeholder="Supermarket" aria-required="true"/>
         <button type="submit">
@@ -56,7 +56,12 @@
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-        <button type="submit" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name">
+        <AntiforgeryToken></AntiforgeryToken>
+    </form>
+    
+    <form id="delete-shopping-list-form" method="post"
+          @formname="DeleteShoppingListForm" @onsubmit="DeleteShoppingList">
+        <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this list?')">
             <i class="ti ti-trash"></i>
         </button>
         <AntiforgeryToken></AntiforgeryToken>
@@ -139,7 +144,7 @@
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
         
-        NavigationManager.NavigateTo($"/shopping-list/{shoppingList.Id}", forceLoad: true);
+        NavigationManager.NavigateTo("/shopping-list/", forceLoad: true);
     }
     
     private async Task EditShoppingList()
@@ -163,6 +168,6 @@
         db.ShoppingList.Remove(ShoppingList);
         await db.SaveChangesAsync();
         
-        NavigationManager.NavigateTo($"/shopping-list", forceLoad: true);
+        NavigationManager.NavigateTo("/shopping-list/", forceLoad: true);
     }
 }

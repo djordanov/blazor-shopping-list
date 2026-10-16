@@ -14,8 +14,9 @@
 
 #shopping-list-select,
 #shopping-list-default-controls,
-#AddShoppingListForm,
-#edit-shopping-list-form {
+#add-shopping-list-form,
+#edit-shopping-list-form,
+#delete-shopping-list-form {
     display: none;
 }
 
@@ -25,11 +26,16 @@
 }
 
 #shopping-list-header[data-mode="default"] #shopping-list-select,
-#shopping-list-header[data-mode="add"] #AddShoppingListForm,
-#shopping-list-header[data-mode="edit"] #edit-shopping-list-form {
+#shopping-list-header[data-mode="add"] #add-shopping-list-form,
+#shopping-list-header[data-mode="edit"] #edit-shopping-list-form,
+#shopping-list-header[data-mode="edit"] #delete-shopping-list-form {
     display: flex;
     gap: 0.5rem;
     flex-grow: 1;
+}
+
+#delete-shopping-list-form {
+    flex-grow: 0;
 }
 
 #shopping-list-stage-selectors {
