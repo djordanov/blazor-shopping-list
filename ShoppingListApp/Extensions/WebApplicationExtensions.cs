@@ -73,43 +73,6 @@ public static class WebApplicationExtensions
                 httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{id}";
             });
             
-            app.MapDelete("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var shoppingList = await db.ShoppingList.FindAsync(id);
-                if (shoppingList is null)
-                {
-                    return Results.NotFound();
-                }
-
-                db.ShoppingList.Remove(shoppingList);
-                await db.SaveChangesAsync();
-                
-                httpContext.Response.Headers["HX-Redirect"] = "/shopping-list";
-                return Results.NoContent(); 
-            });
-            
-            app.MapPatch("/htmx/shopping-list/{id:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid id) =>
-                {
-                    await using var db = await dbFactory.CreateDbContextAsync();
-                    var shoppingList = await db.ShoppingList.FindAsync(id);
-                    if (shoppingList is null)
-                    {
-                        return Results.NotFound();
-                    }
-
-                    var form = await httpContext.Request.ReadFormAsync();
-                    if (!form.TryGetValue("name", out var rawName) || string.IsNullOrWhiteSpace(rawName.ToString()))
-                    {
-                        return Results.BadRequest();
-                    }
-                    shoppingList.Name = rawName.ToString();
-                    await db.SaveChangesAsync();
-
-                    httpContext.Response.Headers["HX-Redirect"] = $"/shopping-list/{shoppingList.Id}";
-                    return Results.Ok();
-                });
-
             return app;
         }
 

@@ -6,6 +6,7 @@
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager NavigationManager
 
 <PageTitle>@(ShoppingList?.Name ?? "Shopping List")</PageTitle>
 
@@ -45,7 +46,8 @@
     </form>
     
     <!-- controls for edit mode -->
-    <form id="edit-shopping-list-form" hx-patch="/htmx/shopping-list/@ShoppingList?.Id" hx-swap="none">
+    <form id="edit-shopping-list-form" method="post"
+          @formname="EditShoppingListForm" @onsubmit="EditShoppingList">
         <input name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
@@ -54,10 +56,10 @@
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-        <button type="button" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name"
-                hx-delete="/htmx/shopping-list/@ShoppingList?.Id">
+        <button type="submit" class="secondary" hx-confirm="Are you sure you want to delete @ShoppingList?.Name">
             <i class="ti ti-trash"></i>
         </button>
+        <AntiforgeryToken></AntiforgeryToken>
     </form>
 </div>
 
@@ -109,7 +111,8 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
 
-    [SupplyParameterFromForm(FormName="AddShoppingListForm")] private string? NewListName { get; init; } 
+    [SupplyParameterFromForm(FormName="AddShoppingListForm")] private string? NewListName { get; init; }
+    [SupplyParameterFromForm(FormName="EditShoppingListForm")] private string? Name { get; init; }
     
     protected override async Task OnParametersSetAsync()
     {
@@ -125,10 +128,7 @@
 
     private async Task AddShoppingList()
     {
-        if (string.IsNullOrWhiteSpace(NewListName))
-        {
-            throw new InvalidOperationException();
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(NewListName);
         
         var shoppingList = new ShoppingList
         {
@@ -139,7 +139,30 @@
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
         
-        AllShoppingLists.Add(shoppingList);
-        AllShoppingLists = AllShoppingLists.OrderBy(sl => sl.Name).ToList();
+        NavigationManager.NavigateTo($"/shopping-list/{shoppingList.Id}", forceLoad: true);
+    }
+    
+    private async Task EditShoppingList()
+    {
+        ArgumentNullException.ThrowIfNull(ShoppingList);
+        ArgumentException.ThrowIfNullOrWhiteSpace(Name);
+        
+        await using var db = await DbFactory.CreateDbContextAsync();
+        ShoppingList.Name = Name;
+        db.ShoppingList.Update(ShoppingList);
+        await db.SaveChangesAsync();
+        
+        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
+    }
+    
+    private async Task DeleteShoppingList()
+    {
+        ArgumentNullException.ThrowIfNull(ShoppingList);
+        
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.ShoppingList.Remove(ShoppingList);
+        await db.SaveChangesAsync();
+        
+        NavigationManager.NavigateTo($"/shopping-list", forceLoad: true);
     }
 }
