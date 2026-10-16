@@ -96,11 +96,13 @@
                 <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
             }
         </div>
-        <button type="submit" aria-label="Add section"
-                hx-post="/htmx/shopping-list/@ShoppingList!.Id/section" hx-swap="append" hx-target="#sections">
-            <i class="ti ti-plus"></i>
-            <span>ADD SECTION</span>
-        </button>
+        <form @formname="AddSectionForm" @onsubmit="AddSection" method="post">
+            <button type="submit" aria-label="Add section">
+                <i class="ti ti-plus"></i>
+                <span>ADD SECTION</span>
+            </button>
+            <AntiforgeryToken></AntiforgeryToken>
+        </form>
     </div>
     <dialog id="buy-dialog" closedby="any">
         <article>
@@ -172,5 +174,21 @@
         await db.SaveChangesAsync();
         
         NavigationManager.NavigateTo("/shopping-list/", forceLoad: true);
+    }
+
+    private async Task AddSection()
+    {
+        ArgumentNullException.ThrowIfNull(ShoppingList);
+        
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var section = new Section
+        {
+            ShoppingListId = ShoppingList.Id,
+            Name = ""
+        };
+    
+        db.Section.Add(section);
+        await db.SaveChangesAsync();
+        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
     }
 }

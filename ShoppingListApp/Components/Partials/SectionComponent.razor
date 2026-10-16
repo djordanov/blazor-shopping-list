@@ -45,4 +45,12 @@
     [Parameter, EditorRequired] public required Section Section { get; set; }
     [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Section.Name))
+        {
+            Mode = "edit";
+        }
+    }
 }
