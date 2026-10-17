@@ -30,5 +30,11 @@
     [Parameter, EditorRequired] public required Item Item { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
 
-
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Item.Name))
+        {
+            Mode = "edit";
+        }
+    }
 }

@@ -100,24 +100,6 @@ public static class WebApplicationExtensions
                     Items = new List<Item>()
                 });
             });
-            
-            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}",
-                async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid sectionId) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var section = await db.Section.FindAsync(sectionId);
-                if (section is null || section.ShoppingListId != shoppingListId)
-                {
-                    return Results.NotFound();
-                }
-
-                db.Section.Remove(section);
-                await db.SaveChangesAsync();
-    
-                // one could argue for 204 NoContent instead of 200 Ok
-                // however, this is primarily for HTMX and HTMX ignores 204 NoContent
-                return Results.Ok(); 
-            });
         
             app.MapPatch("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}",
                 async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid sectionId) =>

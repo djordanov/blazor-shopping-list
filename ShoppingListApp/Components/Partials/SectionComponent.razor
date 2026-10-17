@@ -12,19 +12,22 @@
 
         <!-- controls for edit mode -->
         <form class="section-edit-form"
-              hx-patch="/htmx/shopping-list/@ShoppingListId/section/@Section.Id" hx-swap="outerHTML" hx-target="closest .section">
-            <input type="text" name="Section.Name" value="@Section.Name"/>
+              @formname="EditSectionForm" @onsubmit="EditSection" method="post">
+            <input type="text" name="EditSectionName" value="@Section.Name"/>
             <button type="submit">
                 <i class="ti ti-check"></i>
             </button>
             <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
                 <i class="ti ti-x"></i>
             </button>
-            <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/section/@Section.Id"
-                    hx-swap="outerHTML" hx-target="closest .section" aria-label="Delete section"
-                    hx-confirm="Are you sure you want to delete section @Section.Name with all it's items?">
+            <AntiforgeryToken></AntiforgeryToken>
+        </form>
+        <form class="section-delete-form" method="post"
+              @formname="DeleteSectionForm" @onsubmit="DeleteSection">
+            <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this section?')">
                 <i class="ti ti-trash"></i>
             </button>
+            <AntiforgeryToken></AntiforgeryToken>
         </form>
     </header>
 
@@ -41,6 +44,7 @@
             <i class="ti ti-plus"></i>
             <span>ADD ITEM</span>
         </button>
+        <AntiforgeryToken></AntiforgeryToken>
     </form>
 
 </article>
@@ -50,6 +54,7 @@
     [Parameter, EditorRequired] public required Section Section { get; set; }
     [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+    [SupplyParameterFromForm(FormName="EditSectionForm")] private string? EditSectionName { get; init; }
     [SupplyParameterFromForm(FormName="AddItemForm")] private string? NewItemName { get; init; }
 
     protected override void OnParametersSet()
@@ -59,17 +64,36 @@
             Mode = "edit";
         }
     }
+    
+    private async Task EditSection()
+    {
+        ArgumentNullException.ThrowIfNull(Section);
+        ArgumentException.ThrowIfNullOrWhiteSpace(EditSectionName);
+        
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Section.Name = EditSectionName;
+        db.Section.Update(Section);
+        await db.SaveChangesAsync();
+        NavigationManager.Refresh();
+    }
 
+    private async Task DeleteSection()
+    {
+        ArgumentNullException.ThrowIfNull(Section);
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.Section.Remove(Section);
+        await db.SaveChangesAsync();
+        NavigationManager.Refresh();
+    }
+    
     private async Task AddItem()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(NewItemName);
-        
         await using var db = await DbFactory.CreateDbContextAsync();
         var item = new Item
         {
             ShoppingListId = ShoppingListId,
             SectionId = Section.Id,
-            Name = NewItemName
+            Name = NewItemName ?? ""
         };
     
         db.Item.Add(item);

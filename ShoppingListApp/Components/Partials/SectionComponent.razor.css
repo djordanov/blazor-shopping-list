@@ -1,5 +1,7 @@
 header {
     background-color: revert;
+    display: flex;
+    gap: 0.5rem;
 }
 
 header span {
@@ -13,17 +15,20 @@ header button[type="submit"] {
 }
 
 header > span,
-.section-edit-form {
+.section-edit-form,
+.section-delete-form {
     display: none;
 }
 
 header[data-mode="default"] > span,
-header[data-mode="edit"] .section-edit-form {
+header[data-mode="edit"] .section-edit-form,
+header[data-mode="edit"] .section-delete-form {
     display: flex;
     gap: 0.5rem;
 }
 
 header[data-mode="default"] > span,
+header[data-mode="edit"] .section-edit-form,
 header[data-mode="edit"] .section-edit-form input {
     flex-grow: 1;
 }
