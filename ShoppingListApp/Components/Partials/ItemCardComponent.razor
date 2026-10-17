@@ -4,11 +4,8 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus"
+<div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus" data-item-id="@Item.Id"
      hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-trigger="end" hx-swap="none">
-    
-    <!-- for POST by sortable -->
-    <input type="hidden" name="Id" value="@Item.Id"/>
     
     <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item"></ItemStatusButton>
     <form @formname="@($"EditItemForm-{Item.Id}")" @onsubmit="EditItem" method="post">

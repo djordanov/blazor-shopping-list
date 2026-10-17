@@ -29,9 +29,7 @@
         </form>
     </header>
 
-    <div id="section-@Section.Id-items" class="items"
-         hx-trigger="add consume, update consume delay: 200ms" hx-swap="none"
-         hx-post="/htmx/shopping-list/@ShoppingListId/section/@Section.Id/sort">
+    <div id="section-@Section.Id-items" class="items">
         @foreach (var item in Items.Where(i => i.SectionId == Section.Id))
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>

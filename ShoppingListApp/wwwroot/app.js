@@ -9,8 +9,7 @@ document.addEventListener('click', (event) => {
 });
 
 let sectionsContainer = document.querySelector('#sections');
-if (sectionsContainer)
-{
+if (sectionsContainer) {
     const shoppingListId = sectionsContainer.getAttribute('data-shopping-list-id')
     if (!sectionsContainer.dataset.sortable) {
         sectionsContainer.dataset.sortable = 'true';
@@ -26,16 +25,13 @@ if (sectionsContainer)
                     headers: new Headers({'content-type': 'application/json'}),
                     body: JSON.stringify(sectionIds)
                 });
-                if (!response.ok)
-                {
+                if (!response.ok) {
                     console.error('section sort failed', response.status);
                 }
             }
         })
     }
-}
-    
-htmx.onLoad( _ => {    
+
     let itemsContainers = document.querySelectorAll('.items')
     itemsContainers.forEach(itemsContainer => {
         // skip already sortable sections
@@ -43,11 +39,31 @@ htmx.onLoad( _ => {
             return;
         }
         itemsContainer.dataset.sortable = 'true';
-        
+
+        let sectionId = itemsContainer.closest('.section').getAttribute('data-section-id');
         new Sortable(itemsContainer, {
             handle: '.sortable-handler',
             animation: 150,
-            group: 'items'
+            group: 'items',
+            onAdd: async () => {
+                sortItems(itemsContainer, shoppingListId, sectionId)
+            },
+            onUpdate: async () => {
+                sortItems(itemsContainer, shoppingListId, sectionId)
+            }
         })
     })
-})
+}
+
+async function sortItems(itemsContainer, shoppingListId, sectionId) {
+    let items = Array.from(itemsContainer.querySelectorAll('.item-card'));
+    let itemIds = items.map(i => i.getAttribute('data-item-id'));
+    let response = await fetch(`/api/shopping-list/${shoppingListId}/section/${sectionId}/sort`, {
+        method: 'post',
+        headers: new Headers({'content-type': 'application/json'}),
+        body: JSON.stringify(itemIds)
+    });
+    if (!response.ok) {
+        console.error('item sort failed', response.status);
+    }
+}
