@@ -44,6 +44,10 @@ form > button {
     display: revert;
 }
 
+.item-delete-form {
+    flex-grow: 0;
+}
+
 .item-card[data-status="Collected"] ::deep span {
     text-decoration: line-through;
 }

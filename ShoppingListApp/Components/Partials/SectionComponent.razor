@@ -12,7 +12,7 @@
 
         <!-- controls for edit mode -->
         <form class="section-edit-form"
-              @formname="EditSectionForm" @onsubmit="EditSection" method="post">
+              @formname="@($"EditSectionForm-{Section.Id}")" @onsubmit="EditSection" method="post">
             <input type="text" name="EditSectionName" value="@Section.Name"/>
             <button type="submit">
                 <i class="ti ti-check"></i>
@@ -22,8 +22,7 @@
             </button>
             <AntiforgeryToken></AntiforgeryToken>
         </form>
-        <form class="section-delete-form" method="post"
-              @formname="DeleteSectionForm" @onsubmit="DeleteSection">
+        <form class="section-delete-form" @formname="@($"DeleteSectionForm-{Section.Id}")" @onsubmit="DeleteSection" method="post">
             <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this section?')">
                 <i class="ti ti-trash"></i>
             </button>
@@ -34,12 +33,12 @@
     <div id="section-@Section.Id-items" class="items"
          hx-trigger="add consume, update consume delay: 200ms" hx-swap="none"
          hx-post="/htmx/shopping-list/@ShoppingListId/section/@Section.Id/sort">
-        @foreach (var item in Items.Where(i => i.SectionId == Section?.Id))
+        @foreach (var item in Items.Where(i => i.SectionId == Section.Id))
         {
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
     </div>
-    <form @formname="AddItemForm" @onsubmit="AddItem" method="post">
+    <form @formname="@($"AddItemForm-{Section.Id}")" @onsubmit="AddItem" method="post">
         <button type="submit" aria-label="Add item">
             <i class="ti ti-plus"></i>
             <span>ADD ITEM</span>
@@ -54,8 +53,8 @@
     [Parameter, EditorRequired] public required Section Section { get; set; }
     [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [SupplyParameterFromForm(FormName="EditSectionForm")] private string? EditSectionName { get; init; }
-    [SupplyParameterFromForm(FormName="AddItemForm")] private string? NewItemName { get; init; }
+    [SupplyParameterFromForm] private string? EditSectionName { get; init; }
+    [SupplyParameterFromForm] private string? NewItemName { get; init; }
 
     protected override void OnParametersSet()
     {

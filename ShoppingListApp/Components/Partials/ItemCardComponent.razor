@@ -1,4 +1,8 @@
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
 @using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager NavigationManager
 
 <div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus"
      hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id" hx-trigger="end" hx-swap="none">
@@ -6,21 +10,23 @@
     <!-- for POST by sortable -->
     <input type="hidden" name="Id" value="@Item.Id"/>
     
-    <form hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-          hx-target="closest .item-card" hx-swap="outerHTML">
-        <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item"></ItemStatusButton>
+    <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item"></ItemStatusButton>
+    <form @formname="@($"EditItemForm-{Item.Id}")" @onsubmit="EditItem" method="post">
         <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
-        <input class="item-name" type="text" name="Name" value="@Item.Name"/>
+        <input class="item-name" type="text" name="EditItemName" value="@Item.Name"/>
         <button type="submit">
             <i class="ti ti-check"></i>
         </button>
         <button type="reset" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
             <i class="ti ti-x"></i>
         </button>
-        <button type="button" class="secondary" hx-delete="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-                hx-swap="outerHTML" hx-target="closest .item-card" aria-label="Delete item">
+        <AntiforgeryToken></AntiforgeryToken>
+    </form>
+    <form class="item-delete-form" @formname="@($"DeleteItemForm-{Item.Id}")" @onsubmit="DeleteItem" method="post">
+        <button type="submit" class="secondary">
             <i class="ti ti-trash"></i>
         </button>
+        <AntiforgeryToken></AntiforgeryToken>
     </form>
     <ItemCountStepperComponent ShoppingListId="ShoppingListId" Item="Item"></ItemCountStepperComponent>
 </div>   
@@ -29,6 +35,7 @@
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
     [Parameter, EditorRequired] public required Item Item { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+    [SupplyParameterFromForm] private string? EditItemName { get; init; }
 
     protected override void OnParametersSet()
     {
@@ -36,5 +43,22 @@
         {
             Mode = "edit";
         }
+    }
+
+    private async Task EditItem()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item.Name = EditItemName ?? "";
+        db.Item.Update(Item);
+        await db.SaveChangesAsync();
+        NavigationManager.Refresh();
+    }
+    
+    private async Task DeleteItem()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.Item.Remove(Item);
+        await db.SaveChangesAsync();
+        NavigationManager.Refresh();
     }
 }
