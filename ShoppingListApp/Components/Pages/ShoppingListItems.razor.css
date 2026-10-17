@@ -34,7 +34,8 @@
     flex-grow: 1;
 }
 
-#delete-shopping-list-form {
+#shopping-list-header[data-mode="edit"] #delete-shopping-list-form {
+    display: flex;
     flex-grow: 0;
 }
 

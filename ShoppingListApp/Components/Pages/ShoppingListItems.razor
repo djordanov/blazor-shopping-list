@@ -48,7 +48,7 @@
     <!-- controls for edit mode -->
     <form id="edit-shopping-list-form" method="post"
           @formname="EditShoppingListForm" @onsubmit="EditShoppingList">
-        <input name="name" value="@(ShoppingList?.Name)" aria-required="true"/>
+        <input name="EditListName" value="@(ShoppingList?.Name)" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
         </button>
@@ -118,7 +118,7 @@
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
 
     [SupplyParameterFromForm(FormName="AddShoppingListForm")] private string? NewListName { get; init; }
-    [SupplyParameterFromForm(FormName="EditShoppingListForm")] private string? Name { get; init; }
+    [SupplyParameterFromForm(FormName="EditShoppingListForm")] private string? EditListName { get; init; }
     
     protected override async Task OnParametersSetAsync()
     {
@@ -149,20 +149,20 @@
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
         
-        NavigationManager.NavigateTo("/shopping-list/", forceLoad: true);
+        NavigationManager.Refresh();
     }
     
     private async Task EditShoppingList()
     {
         ArgumentNullException.ThrowIfNull(ShoppingList);
-        ArgumentException.ThrowIfNullOrWhiteSpace(Name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(EditListName);
         
         await using var db = await DbFactory.CreateDbContextAsync();
-        ShoppingList.Name = Name;
+        ShoppingList.Name = EditListName;
         db.ShoppingList.Update(ShoppingList);
         await db.SaveChangesAsync();
         
-        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
+        NavigationManager.Refresh();
     }
     
     private async Task DeleteShoppingList()
@@ -173,7 +173,7 @@
         db.ShoppingList.Remove(ShoppingList);
         await db.SaveChangesAsync();
         
-        NavigationManager.NavigateTo("/shopping-list/", forceLoad: true);
+        NavigationManager.NavigateTo("/shopping-list/");
     }
 
     private async Task AddSection()
@@ -189,6 +189,6 @@
     
         db.Section.Add(section);
         await db.SaveChangesAsync();
-        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
+        NavigationManager.Refresh();
     }
 }

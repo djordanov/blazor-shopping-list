@@ -151,33 +151,6 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapItemEndpoints()
         {
-            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/item", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var form = await httpContext.Request.ReadFormAsync();
-                var name = form.TryGetValue("Name", out var rawName) ? rawName.ToString() : "";
-                if (!Guid.TryParse(form["SectionId"], out var sectionId))
-                {
-                    return Results.NotFound();
-                }
-                
-                var item = new Item
-                {
-                    ShoppingListId = shoppingListId,
-                    SectionId = sectionId,
-                    Name = name
-                };
-    
-                db.Item.Add(item);
-                await db.SaveChangesAsync();
-                return new RazorComponentResult<ItemCardComponent>(new
-                {
-                    ShoppingListId = shoppingListId,
-                    Item = item,
-                    Mode = "edit"
-                });
-            });
-            
             app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
             {
                 await using var db = await dbFactory.CreateDbContextAsync();

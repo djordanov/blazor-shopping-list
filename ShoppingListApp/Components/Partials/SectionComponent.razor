@@ -1,4 +1,8 @@
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
 @using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager NavigationManager
 
 <article class="section">
     <input type="hidden" name="Section.Id" value="@Section.Id"/>
@@ -32,11 +36,12 @@
             <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
         }
     </div>
-    <button type="submit" aria-label="Add item" hx-vals="js:{'SectionId': '@Section.Id'}"
-            hx-post="/htmx/shopping-list/@ShoppingListId/item" hx-swap="append" hx-target="#section-@Section.Id-items">
-        <i class="ti ti-plus"></i>
-        <span>ADD ITEM</span>
-    </button>
+    <form @formname="AddItemForm" @onsubmit="AddItem" method="post">
+        <button type="submit" aria-label="Add item">
+            <i class="ti ti-plus"></i>
+            <span>ADD ITEM</span>
+        </button>
+    </form>
 
 </article>
 
@@ -45,6 +50,7 @@
     [Parameter, EditorRequired] public required Section Section { get; set; }
     [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
+    [SupplyParameterFromForm(FormName="AddItemForm")] private string? NewItemName { get; init; }
 
     protected override void OnParametersSet()
     {
@@ -52,5 +58,22 @@
         {
             Mode = "edit";
         }
+    }
+
+    private async Task AddItem()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(NewItemName);
+        
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var item = new Item
+        {
+            ShoppingListId = ShoppingListId,
+            SectionId = Section.Id,
+            Name = NewItemName
+        };
+    
+        db.Item.Add(item);
+        await db.SaveChangesAsync();
+        NavigationManager.Refresh();
     }
 }
