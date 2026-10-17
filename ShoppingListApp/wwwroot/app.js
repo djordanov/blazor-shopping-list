@@ -18,16 +18,9 @@ if (sectionsContainer) {
             animation: 150,
             group: 'sections',
             onEnd: async () => {
-                let sections = Array.from(sectionsContainer.querySelectorAll('.section'));
-                let sectionIds = sections.map(s => s.getAttribute('data-section-id'));
-                let response = await fetch(`/api/shopping-list/${shoppingListId}/sort`, {
-                    method: 'post',
-                    headers: new Headers({'content-type': 'application/json'}),
-                    body: JSON.stringify(sectionIds)
-                });
-                if (!response.ok) {
-                    console.error('section sort failed', response.status);
-                }
+                let sectionIds = [...sectionsContainer.querySelectorAll('.section')]
+                    .map(s => s.getAttribute('data-section-id'));
+                postIds(`/api/shopping-list/${shoppingListId}/sort`, sectionIds, 'section sort failed');
             }
         })
     }
@@ -45,25 +38,27 @@ if (sectionsContainer) {
             handle: '.sortable-handler',
             animation: 150,
             group: 'items',
-            onAdd: async () => {
-                sortItems(itemsContainer, shoppingListId, sectionId)
+            onAdd: () => {
+                let itemIds = [...itemsContainer.querySelectorAll('.item-card')]
+                    .map(i => i.getAttribute('data-item-id'));
+                postIds(`/api/shopping-list/${shoppingListId}/section/${sectionId}/sort`, itemIds, 'item sort failed');
             },
-            onUpdate: async () => {
-                sortItems(itemsContainer, shoppingListId, sectionId)
+            onUpdate: () => {
+                let itemIds = [...itemsContainer.querySelectorAll('.item-card')]
+                    .map(i => i.getAttribute('data-item-id'));
+                postIds(`/api/shopping-list/${shoppingListId}/section/${sectionId}/sort`, itemIds, 'item sort failed');
             }
         })
     })
 }
 
-async function sortItems(itemsContainer, shoppingListId, sectionId) {
-    let items = Array.from(itemsContainer.querySelectorAll('.item-card'));
-    let itemIds = items.map(i => i.getAttribute('data-item-id'));
-    let response = await fetch(`/api/shopping-list/${shoppingListId}/section/${sectionId}/sort`, {
+async function postIds(url, ids, errorMessage) {
+    let response = await fetch(url, {
         method: 'post',
-        headers: new Headers({'content-type': 'application/json'}),
-        body: JSON.stringify(itemIds)
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(ids)
     });
     if (!response.ok) {
-        console.error('item sort failed', response.status);
+        console.error(errorMessage, response.status);
     }
 }
