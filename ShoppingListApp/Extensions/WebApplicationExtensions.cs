@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShoppingListApp.Components;
 using ShoppingListApp.Components.Partials;
 using ShoppingListApp.Data;
 using ShoppingListApp.Entities;
@@ -16,18 +16,11 @@ public static class WebApplicationExtensions
         [UsedImplicitly]
         public WebApplication MapShoppingListEndpoints()
         {
-            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/sort",
+            app.MapPost("/api/shopping-list/{shoppingListId:Guid}/sort",
                 // ReSharper disable once UnusedParameter.Local
-                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
+                async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, [FromBody] List<Guid> ids) =>
             {
                 await using var db = await dbFactory.CreateDbContextAsync();
-                var form = await httpContext.Request.ReadFormAsync();
-                form.TryGetValue("Section.Id", out var rawIds);
-                var ids = rawIds
-                    .Select(idString => Guid.TryParse(idString, out var id) ? id : Guid.Empty)
-                    .Where(id => id != Guid.Empty)
-                    .ToList(); // need to preserve sort order
-
                 var sections = await db.Section
                     .Where(section => ids.Contains(section.Id))
                     .ToListAsync();

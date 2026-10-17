@@ -88,9 +88,7 @@
 @if(ShoppingList is not null)
 {
     <div id="shopping-list-body">
-        <div id="sections"
-             hx-trigger="section-sort" hx-swap="none"
-             hx-post="/htmx/shopping-list/@Id/sort">
+        <div id="sections" data-shopping-list-id="@ShoppingList.Id">
             @foreach (var section in ShoppingList?.Sections ?? [])
             {
                 <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>

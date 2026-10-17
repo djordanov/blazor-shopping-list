@@ -4,8 +4,7 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<article class="section">
-    <input type="hidden" name="Section.Id" value="@Section.Id"/>
+<article class="section" data-section-id="@Section.Id">
     <header data-mode="@Mode">
         <!-- default mode -->
         <span class="sortable-handler" onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
