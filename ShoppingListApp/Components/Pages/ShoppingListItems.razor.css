@@ -1,48 +1,48 @@
 #shopping-list-header {
-    display: flex;
-    gap: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 #shopping-list-header button[type="submit"] {
-    width: revert;
-    height: revert;
+  width: revert;
+  height: revert;
 }
 
 #shopping-list-header form input {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 #shopping-list-select,
 #shopping-list-default-controls,
 #add-shopping-list-form,
-#edit-shopping-list-form,
+::deep #edit-shopping-list-form,
 #delete-shopping-list-form {
-    display: none;
+  display: none;
 }
 
 #shopping-list-header[data-mode="default"] #shopping-list-default-controls {
-    display: flex;
-    gap: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 #shopping-list-header[data-mode="default"] #shopping-list-select,
 #shopping-list-header[data-mode="add"] #add-shopping-list-form,
-#shopping-list-header[data-mode="edit"] #edit-shopping-list-form,
+#shopping-list-header[data-mode="edit"] ::deep #edit-shopping-list-form,
 #shopping-list-header[data-mode="edit"] #delete-shopping-list-form {
-    display: flex;
-    gap: 0.5rem;
-    flex-grow: 1;
+  display: flex;
+  gap: 0.5rem;
+  flex-grow: 1;
 }
 
 #shopping-list-header[data-mode="edit"] #delete-shopping-list-form {
-    display: flex;
-    flex-grow: 0;
+  display: flex;
+  flex-grow: 0;
 }
 
 #shopping-list-stage-selectors {
-    margin-bottom: 4rem;
+  margin-bottom: 4rem;
 }
 
-#shopping-list-body[data-shopping-view] > button {
-    display: none;
+#shopping-list-body[data-shopping-view]>button {
+  display: none;
 }
