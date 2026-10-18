@@ -1,13 +1,17 @@
 using JetBrains.Annotations;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShoppingListApp.Components.Partials;
 using ShoppingListApp.Data;
 using ShoppingListApp.Entities;
 // ReSharper disable RedundantAnonymousTypePropertyName
 
 namespace ShoppingListApp.Extensions;
+
+public sealed class PatchItemRequest
+{
+    public int CountDelta { get; set; } = 0;
+    public ItemStatus? ItemStatus { get; set; }
+}
 
 public static class WebApplicationExtensions
 {
@@ -63,63 +67,16 @@ public static class WebApplicationExtensions
                     return Results.Ok();
                 });
             
-            app.MapPost("/htmx/shopping-list/{shoppingListId:Guid}/section",
-                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var form = await httpContext.Request.ReadFormAsync();
-                var name = form.TryGetValue("Section.Name", out var rawName) ? rawName.ToString() : "";
-                
-                var section = new Section
-                {
-                    ShoppingListId = shoppingListId,
-                    Name = name
-                };
-    
-                db.Section.Add(section);
-                await db.SaveChangesAsync();
-                return new RazorComponentResult<SectionComponent>(new
-                {
-                    ShoppingListId = shoppingListId,
-                    Section = section,
-                    Mode = "edit",
-                    Items = new List<Item>()
-                });
-            });
-        
-            app.MapPatch("/htmx/shopping-list/{shoppingListId:Guid}/section/{sectionId:Guid}",
-                async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid sectionId) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var section = await db.Section.Include(s => s.ListItems).FirstOrDefaultAsync(s => s.Id == sectionId);
-                if (section is null || section.ShoppingListId != shoppingListId)
-                {
-                    return Results.NotFound();
-                }
-
-                var form = await httpContext.Request.ReadFormAsync();
-                if (form.TryGetValue("Section.Name", out var rawName))
-                {
-                    section.Name = rawName.ToString();
-                }
-                await db.SaveChangesAsync();
-
-                return new RazorComponentResult<SectionComponent>(new
-                {
-                    ShoppingListId = shoppingListId,
-                    Section = section,
-                    Mode = "default",
-                    Items = section.ListItems
-                });
-            });
-            
             return app;
         }
         
         [UsedImplicitly]
         public WebApplication MapItemEndpoints()
         {
-            app.MapDelete("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, Guid shoppingListId, Guid itemId) =>
+            app.MapPatch("/api/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory,
+                Guid shoppingListId,
+                Guid itemId,
+                [FromBody] PatchItemRequest patchItemRequest) =>
             {
                 await using var db = await dbFactory.CreateDbContextAsync();
                 var item = await db.Item.FindAsync(itemId);
@@ -128,49 +85,19 @@ public static class WebApplicationExtensions
                     return Results.NotFound();
                 }
 
-                db.Item.Remove(item);
-                await db.SaveChangesAsync();
-    
-                // one could argue for 204 NoContent instead of 200 Ok
-                // however, this is primarily for HTMX and HTMX ignores 204 NoContent
-                return Results.Ok(); 
-            });
-            
-            app.MapPatch("/htmx/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory, HttpContext httpContext, Guid shoppingListId, Guid itemId) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var item = await db.Item.FindAsync(itemId);
-                if (item is null || item.ShoppingListId != shoppingListId)
+                item.Count += patchItemRequest.CountDelta;
+                if (item.Count < 0)
                 {
-                    return Results.NotFound();
+                    item.Count = 0;
                 }
-
-                var form = await httpContext.Request.ReadFormAsync();
-                if (form.TryGetValue("Name", out var rawName))
+                
+                if (patchItemRequest.ItemStatus is not null)
                 {
-                    item.Name = rawName.ToString();
-                }
-                if (form.TryGetValue("CountDelta", out var rawCount) && int.TryParse(rawCount, out var countDelta))
-                {
-                    item.Count += countDelta;
-                    if (item.Count < 0)
-                    {
-                        item.Count = 0;
-                    }
-                }
-                if (form.TryGetValue("ItemStatus", out var rawStatus)
-                    && Enum.TryParse<ItemStatus>(rawStatus.ToString(), ignoreCase: true, out var itemStatus))
-                {
-                    item.ItemStatus = itemStatus;
+                    item.ItemStatus = (ItemStatus)patchItemRequest.ItemStatus;
                 }
                 
                 await db.SaveChangesAsync();
-
-                return new RazorComponentResult<ItemCardComponent>(new
-                {
-                    ShoppingListId = shoppingListId,
-                    Item = item
-                });
+                return Results.Ok(item);
             });
         
             return app;
