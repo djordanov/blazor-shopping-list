@@ -8,18 +8,15 @@
     switch (Item.ItemStatus)
     {
         case ItemStatus.Noted:
-            icon = "ti-square-rounded";
-            itemStatusPatch = ItemStatus.Planned;
+            icon = "ti ti-square-rounded";
             ariaLabel = "Mark item as planned";
             break;
         case ItemStatus.Planned:
-            icon = "ti-square-rounded-minus";
-            itemStatusPatch = ItemStatus.Collected;
+            icon = "ti ti-square-rounded-minus";
             ariaLabel = "Mark item as collected";
             break;
         case ItemStatus.Collected:
-            icon = "ti-square-rounded-check";
-            itemStatusPatch = ItemStatus.Noted;
+            icon = "ti ti-square-rounded-check";
             ariaLabel = "Mark item as noted";
             break;
         default:
@@ -27,10 +24,8 @@
     }
 }
 
-<button type="button" class="secondary outline item-status-button" hx-patch="/htmx/shopping-list/@ShoppingListId/item/@Item.Id"
-        hx-vals="js:{'ItemStatus': '@itemStatusPatch'}"
-        hx-swap="outerHTML" hx-target="closest .item-card" aria-label="@ariaLabel">
-    <i class="ti @icon"></i>
+<button type="button" class="secondary outline item-status-button" data-item-status="@Item.ItemStatus" aria-label="@ariaLabel">
+    <i class="@icon"></i>
 </button>
 
 @code {
