@@ -24,8 +24,8 @@ steppers.forEach(stepper => {
         });
         if (response.ok) {
             const item = await response.json();
-            stepper.querySelector('span').innerHTML = item['count'];
-            decrementButton.toggleAttribute('disabled', parseInt(item['count']) <= 0)
+            stepper.querySelector('span').innerText = item['count'];
+            decrementButton.toggleAttribute('disabled', item['count'] <= 0)
         } else {
             console.error('item decrement failed', response.status);
         }
@@ -40,8 +40,8 @@ steppers.forEach(stepper => {
         });
         if (response.ok) {
             const item = await response.json();
-            stepper.querySelector('span').innerHTML = item['count'];
-            decrementButton.toggleAttribute('disabled', parseInt(item['count']) <= 0)
+            stepper.querySelector('span').innerText = item['count'];
+            decrementButton.toggleAttribute('disabled', item['count'] <= 0)
         } else {
             console.error('item increment failed', response.status);
         }
@@ -72,7 +72,9 @@ itemStatusButtons.forEach(button => {
                 nextStatus = 'Noted';
                 ariaLabel = 'Mark item as noted';
                 break;
-            default: console.error('unexpected item status', currentStatus);
+            default:
+                console.error('unexpected item status', currentStatus);
+                return;
         }
     
         const response = await fetch(`/api/shopping-list/${shoppingListId}/item/${itemId}`, {
