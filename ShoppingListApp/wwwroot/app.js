@@ -86,6 +86,7 @@ itemStatusButtons.forEach(button => {
             button.setAttribute('data-item-status', nextStatus);
             button.setAttribute('aria-label', ariaLabel);
             button.querySelector('i').className = icon;
+            button.closest('.item-card').setAttribute('data-status', nextStatus);
         } else {
             console.error('item status patch failed', response.status);
         }});
