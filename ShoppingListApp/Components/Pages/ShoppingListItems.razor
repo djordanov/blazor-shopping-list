@@ -1,6 +1,7 @@
 @page "/"
 @page "/shopping-list"
 @page "/shopping-list/{id:guid}"
+@using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Components.Partials
 @using ShoppingListApp.Data
@@ -29,6 +30,7 @@
                 onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
             <i class="ti ti-plus"></i>
         </button>
+        <AntiforgeryToken></AntiforgeryToken>
     </div>
 
     <!-- controls for add mode -->
@@ -82,10 +84,13 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </button>
-        <button type="button" command="show-modal" commandfor="buy-dialog" aria-label="Buy">
-            <i class="ti ti-credit-card"></i>
-            <span>BUY</span>
-        </button>
+        <form @formname="OpenBuyDialogForm" method="post">
+            <button type="submit" name="OpenBuyDialog" value="true" aria-label="Buy">
+                <i class="ti ti-credit-card"></i>
+                <span>BUY</span>
+            </button>
+            <AntiforgeryToken></AntiforgeryToken>
+        </form>
     </div>
 
     <div id="shopping-list-body">
@@ -103,11 +108,14 @@
             <AntiforgeryToken></AntiforgeryToken>
         </form>
     </div>
-    <dialog id="buy-dialog" closedby="any">
-        <article>
-            <BuyModalComponent ShoppingList="ShoppingList"></BuyModalComponent>
-        </article>
-    </dialog>
+    @if (ShoppingList is not null)
+    {
+        <dialog id="buy-dialog" open="@OpenBuyDialog" closedby="any">
+            <article>
+                <BuyModalComponent ShoppingList="ShoppingList"></BuyModalComponent>
+            </article>
+        </dialog>
+    }
 }
 
 
@@ -116,8 +124,9 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
 
-    [SupplyParameterFromForm] private string? NewListName { get; init; }
-    [SupplyParameterFromForm] private string? EditListName { get; set; }
+    [SupplyParameterFromForm] [MaxLength(64)] private string? NewListName { get; init; }
+    [SupplyParameterFromForm] [MaxLength(64)] private string? EditListName { get; set; }
+    [SupplyParameterFromForm] private string? OpenBuyDialog { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {

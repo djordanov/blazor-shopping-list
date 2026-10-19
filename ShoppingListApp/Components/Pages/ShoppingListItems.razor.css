@@ -1,9 +1,11 @@
-#shopping-list-header {
+#shopping-list-header,
+#shopping-list-stage-selectors {
   display: flex;
   gap: 0.5rem;
 }
 
-#shopping-list-header button[type="submit"] {
+#shopping-list-header button[type="submit"],
+#shopping-list-stage-selectors button[type="submit"] {
   width: revert;
   height: revert;
 }

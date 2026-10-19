@@ -7,7 +7,7 @@
 <form @formname="BuyForm" @onsubmit="Buy" method="post">
     <b>Are you sure you bought the following items?</b>
     <p>Your shopping list will be reset for the next trip!</p>
-    @foreach (var section in ShoppingList?.Sections ?? [])
+    @foreach (var section in ShoppingList.Sections ?? [])
     {
         var items = ShoppingList!.ListItems
             .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
