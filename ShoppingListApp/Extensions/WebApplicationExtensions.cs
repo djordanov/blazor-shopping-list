@@ -2,16 +2,9 @@ using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoppingListApp.Data;
-using ShoppingListApp.Entities;
 // ReSharper disable RedundantAnonymousTypePropertyName
 
 namespace ShoppingListApp.Extensions;
-
-public sealed class PatchItemRequest
-{
-    public int CountDelta { get; set; } = 0;
-    public ItemStatus? ItemStatus { get; set; }
-}
 
 public static class WebApplicationExtensions
 {

@@ -13,50 +13,6 @@ if (sectionsContainer)
 {
     const shoppingListId = sectionsContainer.getAttribute('data-shopping-list-id');
     
-    // click handlers for item count status buttons
-    const itemStatusButtons = document.querySelectorAll('.item-status-button');
-    itemStatusButtons.forEach(button => {
-        const itemId = button.closest('.item-card').getAttribute('data-item-id');
-        
-        button.addEventListener('click', async () => {
-            const currentStatus = button.getAttribute('data-item-status');
-            let icon, nextStatus, ariaLabel;
-            switch (currentStatus) {
-                case 'Noted':
-                    icon = 'ti ti-square-rounded-minus';
-                    nextStatus = 'Planned';
-                    ariaLabel = 'Mark item as planned';
-                    break;
-                case 'Planned':
-                    icon = 'ti ti-square-rounded-check';
-                    nextStatus = 'Collected';
-                    ariaLabel = 'Mark item as collected';
-                    break;
-                case 'Collected':
-                    icon = 'ti ti-square-rounded';
-                    nextStatus = 'Noted';
-                    ariaLabel = 'Mark item as noted';
-                    break;
-                default:
-                    console.error('unexpected item status', currentStatus);
-                    return;
-            }
-        
-            const response = await fetch(`/api/shopping-list/${shoppingListId}/item/${itemId}`, {
-                method: 'patch',
-                headers: {'content-type': 'application/json'},
-                body: JSON.stringify({ 'ItemStatus': nextStatus})
-            });
-            if (response.ok) {
-                button.setAttribute('data-item-status', nextStatus);
-                button.setAttribute('aria-label', ariaLabel);
-                button.querySelector('i').className = icon;
-                button.closest('.item-card').setAttribute('data-status', nextStatus);
-            } else {
-                console.error('item status patch failed', response.status);
-            }});
-        });
-    
     // sorting sections and items on drag and drop
     if (!sectionsContainer.dataset.sortable) {
         sectionsContainer.dataset.sortable = 'true';

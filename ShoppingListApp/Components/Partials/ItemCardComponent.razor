@@ -6,7 +6,7 @@
 
 <div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus" data-item-id="@Item.Id">
     
-    <ItemStatusButton ShoppingListId="ShoppingListId" Item="Item"></ItemStatusButton>
+    <ItemStatusButton ItemId="Item.Id" ItemStatus="Item.ItemStatus"></ItemStatusButton>
     <form @formname="@($"EditItemForm-{Item.Id}")" @onsubmit="EditItem" method="post">
         <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
         <input class="item-name" type="text" name="EditItemName" value="@Item.Name"/>

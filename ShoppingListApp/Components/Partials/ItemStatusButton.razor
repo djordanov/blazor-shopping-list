@@ -1,33 +1,40 @@
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
 @using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
 
 @{
-    string icon;
-    string ariaLabel;
-    
-    switch (Item.ItemStatus)
-    {
-        case ItemStatus.Noted:
-            icon = "ti ti-square-rounded";
-            ariaLabel = "Mark item as planned";
-            break;
-        case ItemStatus.Planned:
-            icon = "ti ti-square-rounded-minus";
-            ariaLabel = "Mark item as collected";
-            break;
-        case ItemStatus.Collected:
-            icon = "ti ti-square-rounded-check";
-            ariaLabel = "Mark item as noted";
-            break;
-        default:
-            throw new ArgumentOutOfRangeException();
-    }
+    var (icon, ariaLabel) = FromStatus(ItemStatus);
 }
 
-<button type="button" class="secondary outline item-status-button" data-item-status="@Item.ItemStatus" aria-label="@ariaLabel">
+<button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="IncrementStatus">
     <i class="@icon"></i>
 </button>
 
 @code {
-    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
-    [Parameter, EditorRequired] public required Item Item { get; set; }
+    [Parameter, EditorRequired] public required Guid ItemId { get; set; }
+    [Parameter, EditorRequired] public required ItemStatus ItemStatus { get; set; }
+
+    private async Task IncrementStatus()
+    {
+        ArgumentNullException.ThrowIfNull(ItemId);
+        ArgumentNullException.ThrowIfNull(ItemStatus);
+        
+        var nextStatus = Item.GetNextItemStatus(ItemStatus);
+
+        var db = await DbFactory.CreateDbContextAsync();
+        await db.Item
+            .Where(i => i.Id == ItemId)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(item => item.ItemStatus, nextStatus));
+        ItemStatus = nextStatus;
+    }
+
+    private static (string icon, string ariaLabel) FromStatus(ItemStatus itemStatus) => itemStatus switch
+    {
+        ItemStatus.Noted => ("ti ti-square-rounded", "Mark item as planned"),
+        ItemStatus.Planned => ("ti ti-square-rounded-minus", "Mark item as collected"),
+        ItemStatus.Collected => ("ti ti-square-rounded-check", "Mark item as noted"),
+        _ => throw new ArgumentOutOfRangeException()
+    };
 }
