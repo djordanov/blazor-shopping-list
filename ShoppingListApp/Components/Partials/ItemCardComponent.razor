@@ -7,14 +7,14 @@
 @if(Item is not null)
 {
     <div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus">
-        <ItemStatusButton Item="Item"></ItemStatusButton>
+        <ItemStatusButton Item="Item" OnClickCallback="IncrementStatus"></ItemStatusButton>
         <form @onsubmit="EditItem" @onsubmit:preventDefault="true">
             <span class="item-name" @onclick="EnterEditMode">@Item.Name</span>
             <input class="item-name" type="text" @bind="EditItemName"/>
             <button type="submit">
                 <i class="ti ti-check"></i>
             </button>
-            <button type="reset" @onclick="ExitEditMode">
+            <button type="reset" @onclick="ExitEditMode" @onclick:preventDefault="true">
                 <i class="ti ti-x"></i>
             </button>
         </form>
@@ -43,6 +43,17 @@
         {
             Mode = "edit";
         }
+    }
+    
+    private async Task IncrementStatus()
+    {
+        ArgumentNullException.ThrowIfNull(Item);
+        
+        var nextStatus = Item.GetNextItemStatus(Item.ItemStatus);
+        Item.ItemStatus = nextStatus;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.Item.Update(Item);
+        await db.SaveChangesAsync();
     }
 
     private void EnterEditMode()

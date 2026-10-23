@@ -7,25 +7,13 @@
     var (icon, ariaLabel) = FromStatus(Item.ItemStatus);
 }
 
-<button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="IncrementStatus">
+<button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="() => OnClickCallback.InvokeAsync()">
     <i class="@icon"></i>
 </button>
 
 @code {
     [Parameter, EditorRequired] public required Item Item { get; set; }
-
-    private async Task IncrementStatus()
-    {
-        ArgumentNullException.ThrowIfNull(Item);
-        
-        var nextStatus = Item.GetNextItemStatus(Item.ItemStatus);
-
-        var db = await DbFactory.CreateDbContextAsync();
-        await db.Item
-            .Where(i => i.Id == Item.Id)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(item => item.ItemStatus, nextStatus));
-        Item.ItemStatus = nextStatus;
-    }
+    [Parameter, EditorRequired] public required EventCallback OnClickCallback { get; set; }
 
     private static (string icon, string ariaLabel) FromStatus(ItemStatus itemStatus) => itemStatus switch
     {
