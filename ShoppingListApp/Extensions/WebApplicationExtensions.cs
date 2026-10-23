@@ -69,38 +69,5 @@ public static class WebApplicationExtensions
             
             return app;
         }
-        
-        [UsedImplicitly]
-        public WebApplication MapItemEndpoints()
-        {
-            app.MapPatch("/api/shopping-list/{shoppingListId:Guid}/item/{itemId:Guid}", async (IDbContextFactory<AppDbContext> dbFactory,
-                Guid shoppingListId,
-                Guid itemId,
-                [FromBody] PatchItemRequest patchItemRequest) =>
-            {
-                await using var db = await dbFactory.CreateDbContextAsync();
-                var item = await db.Item.FindAsync(itemId);
-                if (item is null || item.ShoppingListId != shoppingListId)
-                {
-                    return Results.NotFound();
-                }
-
-                item.Count += patchItemRequest.CountDelta;
-                if (item.Count < 0)
-                {
-                    item.Count = 0;
-                }
-                
-                if (patchItemRequest.ItemStatus is not null)
-                {
-                    item.ItemStatus = (ItemStatus)patchItemRequest.ItemStatus;
-                }
-                
-                await db.SaveChangesAsync();
-                return Results.Ok(item);
-            });
-        
-            return app;
-        }
     }
 }

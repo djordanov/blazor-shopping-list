@@ -30,7 +30,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<ShoppingList>()
             .HasMany(sl => sl.Sections)
             .WithOne(s => s.ShoppingList)
-            .HasForeignKey(s => s.ShoppingListId);
+            .HasForeignKey(s => s.ShoppingListId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

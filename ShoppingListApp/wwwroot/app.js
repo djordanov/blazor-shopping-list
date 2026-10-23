@@ -13,44 +13,6 @@ if (sectionsContainer)
 {
     const shoppingListId = sectionsContainer.getAttribute('data-shopping-list-id');
     
-    // click handlers for item count stepper buttons
-    const steppers = document.querySelectorAll('.item-count-stepper');
-    steppers.forEach(stepper => {
-        const itemId = stepper.closest('.item-card').getAttribute('data-item-id');
-    
-        const decrementButton = stepper.querySelector('.decrement');
-        decrementButton.addEventListener('click', async () => {
-            const response = await fetch(`/api/shopping-list/${shoppingListId}/item/${itemId}`, {
-                method: 'patch',
-                headers: {'content-type': 'application/json'},
-                body: JSON.stringify({ 'CountDelta': -1})
-            });
-            if (response.ok) {
-                const item = await response.json();
-                stepper.querySelector('span').innerText = item['count'];
-                decrementButton.toggleAttribute('disabled', item['count'] <= 0)
-            } else {
-                console.error('item decrement failed', response.status);
-            }
-        })
-    
-        const incrementButton = stepper.querySelector('.increment');
-        incrementButton.addEventListener('click', async () => {
-            const response = await fetch(`/api/shopping-list/${shoppingListId}/item/${itemId}`, {
-                method: 'patch',
-                headers: {'content-type': 'application/json'},
-                body: JSON.stringify({ 'CountDelta': +1})
-            });
-            if (response.ok) {
-                const item = await response.json();
-                stepper.querySelector('span').innerText = item['count'];
-                decrementButton.toggleAttribute('disabled', item['count'] <= 0)
-            } else {
-                console.error('item increment failed', response.status);
-            }
-        })
-    })
-    
     // click handlers for item count status buttons
     const itemStatusButtons = document.querySelectorAll('.item-status-button');
     itemStatusButtons.forEach(button => {

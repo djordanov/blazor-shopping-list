@@ -21,7 +21,6 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 app.MapShoppingListEndpoints();
 app.MapSectionEndpoints();
-app.MapItemEndpoints();
 
 if (!EF.IsDesignTime)
 {

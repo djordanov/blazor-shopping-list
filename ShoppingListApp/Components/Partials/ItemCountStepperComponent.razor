@@ -1,16 +1,50 @@
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using ShoppingListApp.Data
 @using ShoppingListApp.Entities
+@inject IDbContextFactory<AppDbContext> DbFactory
 
-<div class="item-count-stepper">
-    <button type="button" class="secondary outline decrement" disabled="@(Item.Count < 1)">
-        <i class="ti ti-minus"></i>
-    </button>
-    <span>@Item.Count</span>
-    <button type="button" class="secondary outline increment">
-        <i class="ti ti-plus"></i>
-    </button>
-</div>
+@if (Item is null)
+{
+    <p>Loading ...</p>
+}
+else {
+    <div class="item-count-stepper">
+        <button type="button" class="secondary outline decrement" disabled="@(Item.Count < 1)" @onclick="Decrement">
+            <i class="ti ti-minus"></i>
+        </button>
+        <span>@Item.Count</span>
+        <button type="button" class="secondary outline increment" @onclick="Increment">
+            <i class="ti ti-plus"></i>
+        </button>
+    </div>
+}
 
 @code {
-    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
-    [Parameter, EditorRequired] public required Item Item { get; set; }
+    [Parameter, EditorRequired] public required Guid ItemId { get; set; }
+    private Item? Item { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(ItemId);
+    }
+
+    private async Task Decrement()
+    {
+        ArgumentNullException.ThrowIfNull(Item);
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item.Count = Math.Max(0, Item.Count - 1);
+        db.Item.Update(Item);
+        await db.SaveChangesAsync();
+    }
+    
+    private async Task Increment()
+    {
+        ArgumentNullException.ThrowIfNull(Item);
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item.Count += 1;
+        db.Item.Update(Item);
+        await db.SaveChangesAsync();
+    }
 }
