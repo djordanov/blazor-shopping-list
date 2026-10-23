@@ -1,11 +1,10 @@
-@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
 
 @{
-    var (icon, ariaLabel) = FromStatus(ItemStatus);
+    var (icon, ariaLabel) = FromStatus(Item.ItemStatus);
 }
 
 <button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="IncrementStatus">
@@ -13,21 +12,19 @@
 </button>
 
 @code {
-    [Parameter, EditorRequired] public required Guid ItemId { get; set; }
-    [Parameter, EditorRequired] public required ItemStatus ItemStatus { get; set; }
+    [Parameter, EditorRequired] public required Item Item { get; set; }
 
     private async Task IncrementStatus()
     {
-        ArgumentNullException.ThrowIfNull(ItemId);
-        ArgumentNullException.ThrowIfNull(ItemStatus);
+        ArgumentNullException.ThrowIfNull(Item);
         
-        var nextStatus = Item.GetNextItemStatus(ItemStatus);
+        var nextStatus = Item.GetNextItemStatus(Item.ItemStatus);
 
         var db = await DbFactory.CreateDbContextAsync();
         await db.Item
-            .Where(i => i.Id == ItemId)
+            .Where(i => i.Id == Item.Id)
             .ExecuteUpdateAsync(setters => setters.SetProperty(item => item.ItemStatus, nextStatus));
-        ItemStatus = nextStatus;
+        Item.ItemStatus = nextStatus;
     }
 
     private static (string icon, string ariaLabel) FromStatus(ItemStatus itemStatus) => itemStatus switch

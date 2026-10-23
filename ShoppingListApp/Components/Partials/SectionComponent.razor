@@ -32,7 +32,7 @@
     <div id="section-@Section.Id-items" class="items">
         @foreach (var item in Items.Where(i => i.SectionId == Section.Id))
         {
-            <ItemCardComponent ShoppingListId="ShoppingListId" Item="item"></ItemCardComponent>
+            <ItemCardComponent ItemId="item.Id"></ItemCardComponent>
         }
     </div>
     <form @formname="@($"AddItemForm-{Section.Id}")" @onsubmit="AddItem" method="post">

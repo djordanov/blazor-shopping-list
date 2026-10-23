@@ -1,60 +1,78 @@
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
-@inject NavigationManager NavigationManager
 
-<div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus" data-item-id="@Item.Id">
-    
-    <ItemStatusButton ItemId="Item.Id" ItemStatus="Item.ItemStatus"></ItemStatusButton>
-    <form @formname="@($"EditItemForm-{Item.Id}")" @onsubmit="EditItem" method="post">
-        <span class="item-name" onclick="this.closest('.item-card').setAttribute('data-mode', 'edit')">@Item.Name</span>
-        <input class="item-name" type="text" name="EditItemName" value="@Item.Name"/>
-        <button type="submit">
-            <i class="ti ti-check"></i>
-        </button>
-        <button type="reset" onclick="this.closest('.item-card').setAttribute('data-mode', 'default')">
-            <i class="ti ti-x"></i>
-        </button>
-        <AntiforgeryToken></AntiforgeryToken>
-    </form>
-    <form class="item-delete-form" @formname="@($"DeleteItemForm-{Item.Id}")" @onsubmit="DeleteItem" method="post">
-        <button type="submit" class="secondary">
-            <i class="ti ti-trash"></i>
-        </button>
-        <AntiforgeryToken></AntiforgeryToken>
-    </form>
-    <ItemCountStepperComponent ItemId="@Item.Id"></ItemCountStepperComponent>
-</div>   
+@if(Item is not null)
+{
+    <div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus">
+        <ItemStatusButton Item="Item"></ItemStatusButton>
+        <form @onsubmit="EditItem" @onsubmit:preventDefault="true">
+            <span class="item-name" @onclick="EnterEditMode">@Item.Name</span>
+            <input class="item-name" type="text" @bind="EditItemName"/>
+            <button type="submit">
+                <i class="ti ti-check"></i>
+            </button>
+            <button type="reset" @onclick="ExitEditMode">
+                <i class="ti ti-x"></i>
+            </button>
+        </form>
+        <form class="item-delete-form" @onsubmit="DeleteItem" @onsubmit:preventDefault="true">
+            <button type="submit" class="secondary">
+                <i class="ti ti-trash"></i>
+            </button>
+        </form>
+        <ItemCountStepperComponent Item="@Item"></ItemCountStepperComponent>
+    </div>   
+}
 
 @code {
-    [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
-    [Parameter, EditorRequired] public required Item Item { get; set; }
-    [Parameter] public string Mode { get; set; } = "default";
-    [SupplyParameterFromForm] private string? EditItemName { get; init; }
+    [Parameter, EditorRequired] public required Guid ItemId { get; set; }
+    private string Mode { get; set; } = "default";
+    public Item? Item { get; set; }
+    [SupplyParameterFromForm] private string? EditItemName { get; set; }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        if (string.IsNullOrEmpty(Item.Name))
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(ItemId);
+
+        EditItemName = Item?.Name;
+        if (string.IsNullOrEmpty(Item?.Name))
         {
             Mode = "edit";
         }
     }
 
+    private void EnterEditMode()
+    {
+        Mode = "edit";
+    }
+
+    private void ExitEditMode()
+    {
+        Mode = "default";
+    }
+
     private async Task EditItem()
     {
+        ArgumentNullException.ThrowIfNull(Item);
+        
         await using var db = await DbFactory.CreateDbContextAsync();
         Item.Name = EditItemName ?? "";
         db.Item.Update(Item);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
+        ExitEditMode();
     }
     
     private async Task DeleteItem()
     {
+        ArgumentNullException.ThrowIfNull(Item);
+        
         await using var db = await DbFactory.CreateDbContextAsync();
         db.Item.Remove(Item);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
+        Item = null;
     }
 }
