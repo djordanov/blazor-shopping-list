@@ -70,6 +70,7 @@
         
         Section.Name = EditSectionName;
         await db.SaveChangesAsync();
+        Mode = "default";
     }
 
     private async Task DeleteSection()
@@ -78,6 +79,7 @@
         await using var db = await DbFactory.CreateDbContextAsync();
         db.Section.Remove(Section);
         await db.SaveChangesAsync();
+        Section = null;
     }
     
     private async Task AddItem()
