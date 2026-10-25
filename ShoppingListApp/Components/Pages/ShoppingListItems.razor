@@ -194,5 +194,7 @@
 
         db.Section.Add(section);
         await db.SaveChangesAsync();
+        ShoppingList.Sections.Add(section);
+        ShoppingList.Sections.Sort((s1, s2) => s1.SortOrder - s2.SortOrder);
     }
 }
