@@ -12,7 +12,7 @@
 
 <PageTitle>@(ShoppingList?.Name ?? "Shopping List")</PageTitle>
 
-<div id="shopping-list-header" data-mode="default">
+<div id="shopping-list-header" data-mode="@Mode">
     <select id="shopping-list-select" onchange="window.location = this.value">
         <ShoppingListOptionComponent IsSelected="@false"></ShoppingListOptionComponent>
         @foreach (var shoppingList in AllShoppingLists)
@@ -23,12 +23,10 @@
 
     <!-- controls for default mode -->
     <div id="shopping-list-default-controls">
-        <button type="button" class="secondary" disabled="@(ShoppingList is null)"
-                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'edit')">
+        <button type="button" class="secondary" disabled="@(ShoppingList is null)" @onclick='() => Mode = "edit"'>
             <i class="ti ti-edit"></i>
         </button>
-        <button type="button" class="secondary" aria-label="Add shopping list"
-                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'add')">
+        <button type="button" class="secondary" aria-label="Add shopping list" @onclick='() => Mode = "add"'>
             <i class="ti ti-plus"></i>
         </button>
         <AntiforgeryToken></AntiforgeryToken>
@@ -36,12 +34,11 @@
 
     <!-- controls for add mode -->
     <form id="add-shopping-list-form" @onsubmit="AddShoppingList" @onsubmit:preventDefault="true">
-        <input name="NewListName" placeholder="Supermarket" aria-required="true"/>
+        <input @bind="NewListName" placeholder="Supermarket" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
         </button>
-        <button type="reset"
-                onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
+        <button type="reset" @onclick='() => Mode = "default"'>
             <i class="ti ti-x"></i>
         </button>
         <AntiforgeryToken></AntiforgeryToken>
@@ -54,12 +51,10 @@
             <DataAnnotationsValidator />
             <ValidationSummary />
             <InputText @bind-Value="EditListName" />
-            <button type="submit"
-                    onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
+            <button type="submit">
                 <i class="ti ti-check"></i>
             </button>
-            <button type="reset"
-                    onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
+            <button type="reset" @onclick='() => Mode = "default"' @onclick:preventDefault="true">
                 <i class="ti ti-x"></i>
             </button>
         </EditForm>
@@ -123,9 +118,10 @@
     private ShoppingList? ShoppingList { get; set; }
     private List<ShoppingList> AllShoppingLists { get; set; } = [];
 
-    [SupplyParameterFromForm] [MaxLength(64)] private string? NewListName { get; init; }
+    [SupplyParameterFromForm] [MaxLength(64)] private string? NewListName { get; set; }
     [SupplyParameterFromForm] [MaxLength(64)] private string? EditListName { get; set; }
     [SupplyParameterFromForm] private string? OpenBuyDialog { get; set; }
+    private string Mode { get; set; } = "default";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -149,25 +145,30 @@
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(NewListName);
 
+        await using var db = await DbFactory.CreateDbContextAsync();
         var shoppingList = new ShoppingList
         {
             Name = NewListName
         };
 
-        await using var db = await DbFactory.CreateDbContextAsync();
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
+        AllShoppingLists.Add(shoppingList);
+        AllShoppingLists.Sort((s1, s2) => s1.GetHashCode() - s2.GetHashCode());
+        Mode = "default";
     }
 
     private async Task EditShoppingList()
     {
-        await using var db = await DbFactory.CreateDbContextAsync();
-        ShoppingList = await db.ShoppingList.FindAsync(ShoppingList?.Id);
         ArgumentNullException.ThrowIfNull(ShoppingList);
         ArgumentException.ThrowIfNullOrWhiteSpace(EditListName);
-        
+     
+        await using var db = await DbFactory.CreateDbContextAsync();
         ShoppingList.Name = EditListName;
+        AllShoppingLists.First(s => s.Id == ShoppingList.Id).Name = EditListName;
+        db.ShoppingList.Update(ShoppingList);
         await db.SaveChangesAsync();
+        Mode = "default";
     }
 
     private async Task DeleteShoppingList()
