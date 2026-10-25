@@ -27,16 +27,12 @@
 }
 
 @code {
-    [Parameter, EditorRequired] public required Guid ItemId { get; set; }
+    [Parameter, EditorRequired] public Item? Item { get; set; }
     private string Mode { get; set; } = "default";
-    public Item? Item { get; set; }
     [SupplyParameterFromForm] private string? EditItemName { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        await using var db = await DbFactory.CreateDbContextAsync();
-        Item = await db.Item.FindAsync(ItemId);
-
         EditItemName = Item?.Name;
         if (string.IsNullOrEmpty(Item?.Name))
         {

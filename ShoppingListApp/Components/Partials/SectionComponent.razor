@@ -2,60 +2,60 @@
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
 @inject IDbContextFactory<AppDbContext> DbFactory
-@inject NavigationManager NavigationManager
 
-<article class="section" data-section-id="@Section.Id">
-    <header data-mode="@Mode">
-        <!-- default mode -->
-        <span class="sortable-handler" onclick="this.closest('header').setAttribute('data-mode', 'edit')">@Section.Name</span>
+@if (Section is not null)
+{
+    <article class="section" data-section-id="@Section?.Id">
+        <header data-mode="@Mode">
+            <!-- default mode -->
+            <span class="sortable-handler" @onclick='() => Mode = "edit"'>@Section?.Name</span>
+            <!-- controls for edit mode -->
+            <form class="section-edit-form" @onsubmit="EditSection" @onsubmit:preventDefault="true">
+                <input type="text" @bind="EditSectionName"/>
+                <button type="submit">
+                    <i class="ti ti-check"></i>
+                </button>
+                <button type="reset" @onclick='() => Mode = "default"' @onclick:preventDefault="true">
+                    <i class="ti ti-x"></i>
+                </button>
+                <AntiforgeryToken></AntiforgeryToken>
+            </form>
+            <form class="section-delete-form" @onsubmit="DeleteSection" @onsubmit:preventDefault="true">
+                <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this section?')">
+                    <i class="ti ti-trash"></i>
+                </button>
+                <AntiforgeryToken></AntiforgeryToken>
+            </form>
+        </header>
 
-        <!-- controls for edit mode -->
-        <form class="section-edit-form"
-              @formname="@($"EditSectionForm-{Section.Id}")" @onsubmit="EditSection" method="post">
-            <input type="text" name="EditSectionName" value="@Section.Name"/>
-            <button type="submit">
-                <i class="ti ti-check"></i>
-            </button>
-            <button type="reset" onclick="this.closest('header').setAttribute('data-mode', 'default')">
-                <i class="ti ti-x"></i>
+        <div class="items">
+            @foreach (var item in Items.Where(i => i.SectionId == Section.Id))
+            {
+                <ItemCardComponent Item="@item"></ItemCardComponent>
+            }
+        </div>
+        <form @onsubmit="AddItem" @onsubmit:preventDefault="true">
+            <button type="submit" aria-label="Add item">
+                <i class="ti ti-plus"></i>
+                <span>ADD ITEM</span>
             </button>
             <AntiforgeryToken></AntiforgeryToken>
         </form>
-        <form class="section-delete-form" @formname="@($"DeleteSectionForm-{Section.Id}")" @onsubmit="DeleteSection" method="post">
-            <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this section?')">
-                <i class="ti ti-trash"></i>
-            </button>
-            <AntiforgeryToken></AntiforgeryToken>
-        </form>
-    </header>
-
-    <div id="section-@Section.Id-items" class="items">
-        @foreach (var item in Items.Where(i => i.SectionId == Section.Id))
-        {
-            <ItemCardComponent ItemId="item.Id"></ItemCardComponent>
-        }
-    </div>
-    <form @formname="@($"AddItemForm-{Section.Id}")" @onsubmit="AddItem" method="post">
-        <button type="submit" aria-label="Add item">
-            <i class="ti ti-plus"></i>
-            <span>ADD ITEM</span>
-        </button>
-        <AntiforgeryToken></AntiforgeryToken>
-    </form>
-
-</article>
+    </article>
+}
 
 @code {
     [Parameter, EditorRequired] public required Guid ShoppingListId { get; set; }
-    [Parameter, EditorRequired] public required Section Section { get; set; }
+    [Parameter, EditorRequired] public required Section? Section { get; set; }
     [Parameter, EditorRequired] public required List<Item> Items { get; set; }
     [Parameter] public string Mode { get; set; } = "default";
-    [SupplyParameterFromForm] private string? EditSectionName { get; init; }
+    [SupplyParameterFromForm] private string? EditSectionName { get; set; }
     [SupplyParameterFromForm] private string? NewItemName { get; init; }
 
     protected override void OnParametersSet()
     {
-        if (string.IsNullOrEmpty(Section.Name))
+        EditSectionName = Section?.Name;
+        if (string.IsNullOrEmpty(Section?.Name))
         {
             Mode = "edit";
         }
@@ -63,14 +63,13 @@
     
     private async Task EditSection()
     {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Section = await db.Section.FindAsync(Section?.Id);
         ArgumentNullException.ThrowIfNull(Section);
         ArgumentException.ThrowIfNullOrWhiteSpace(EditSectionName);
         
-        await using var db = await DbFactory.CreateDbContextAsync();
         Section.Name = EditSectionName;
-        db.Section.Update(Section);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
     }
 
     private async Task DeleteSection()
@@ -79,11 +78,11 @@
         await using var db = await DbFactory.CreateDbContextAsync();
         db.Section.Remove(Section);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
     }
     
     private async Task AddItem()
     {
+        ArgumentNullException.ThrowIfNull(Section);
         await using var db = await DbFactory.CreateDbContextAsync();
         var item = new Item
         {
@@ -94,6 +93,5 @@
     
         db.Item.Add(item);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
     }
 }

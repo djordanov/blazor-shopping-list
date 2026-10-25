@@ -1,6 +1,7 @@
 @page "/"
 @page "/shopping-list"
 @page "/shopping-list/{id:guid}"
+@rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Components.Partials
@@ -34,8 +35,7 @@
     </div>
 
     <!-- controls for add mode -->
-    <form id="add-shopping-list-form" method="post"
-          @formname="AddShoppingListForm" @onsubmit="AddShoppingList">
+    <form id="add-shopping-list-form" @onsubmit="AddShoppingList" @onsubmit:preventDefault="true">
         <input name="NewListName" placeholder="Supermarket" aria-required="true"/>
         <button type="submit">
             <i class="ti ti-check"></i>
@@ -50,12 +50,12 @@
     <!-- controls for edit mode -->
     @if(ShoppingList is not null)
     {
-        <EditForm id="edit-shopping-list-form" Model="ShoppingList" FormName="EditShoppingListForm"
-              OnSubmit="EditShoppingList">
+        <EditForm id="edit-shopping-list-form" Model="ShoppingList" OnValidSubmit="EditShoppingList">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <InputText @bind-Value="EditListName" />
-            <button type="submit">
+            <button type="submit"
+                    onclick="document.getElementById('shopping-list-header').setAttribute('data-mode', 'default')">
                 <i class="ti ti-check"></i>
             </button>
             <button type="reset"
@@ -65,8 +65,7 @@
         </EditForm>
     }
 
-    <form id="delete-shopping-list-form" method="post"
-          @formname="DeleteShoppingListForm" @onsubmit="DeleteShoppingList">
+    <form id="delete-shopping-list-form" @onsubmit="DeleteShoppingList" @onclick:preventDefault="true">
         <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this list?')">
             <i class="ti ti-trash"></i>
         </button>
@@ -100,7 +99,7 @@
                 <SectionComponent ShoppingListId="(Guid)Id!" Section="section" Items="section.ListItems"></SectionComponent>
             }
         </div>
-        <form @formname="AddSectionForm" @onsubmit="AddSection" method="post">
+        <form @onsubmit="AddSection" @onsubmit:preventDefault="true">
             <button type="submit" aria-label="Add section">
                 <i class="ti ti-plus"></i>
                 <span>ADD SECTION</span>
@@ -158,21 +157,17 @@
         await using var db = await DbFactory.CreateDbContextAsync();
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
-
-        NavigationManager.Refresh();
     }
 
     private async Task EditShoppingList()
     {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        ShoppingList = await db.ShoppingList.FindAsync(ShoppingList?.Id);
         ArgumentNullException.ThrowIfNull(ShoppingList);
         ArgumentException.ThrowIfNullOrWhiteSpace(EditListName);
-
-        await using var db = await DbFactory.CreateDbContextAsync();
+        
         ShoppingList.Name = EditListName;
-        db.ShoppingList.Update(ShoppingList);
         await db.SaveChangesAsync();
-
-        NavigationManager.Refresh();
     }
 
     private async Task DeleteShoppingList()
@@ -199,6 +194,5 @@
 
         db.Section.Add(section);
         await db.SaveChangesAsync();
-        NavigationManager.Refresh();
     }
 }
