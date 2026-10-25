@@ -150,7 +150,7 @@
         db.ShoppingList.Add(shoppingList);
         await db.SaveChangesAsync();
         AllShoppingLists.Add(shoppingList);
-        AllShoppingLists.Sort((s1, s2) => s1.GetHashCode() - s2.GetHashCode());
+        AllShoppingLists.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
         Mode = "default";
     }
 
@@ -186,7 +186,8 @@
         var section = new Section
         {
             ShoppingListId = ShoppingList.Id,
-            Name = ""
+            Name = "",
+            SortOrder = ShoppingList.Sections.Count == 0 ? 0 : ShoppingList.Sections.Max(s => s.SortOrder) + 1
         };
 
         db.Section.Add(section);
