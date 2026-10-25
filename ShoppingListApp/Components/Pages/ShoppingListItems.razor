@@ -60,7 +60,7 @@
         </EditForm>
     }
 
-    <form id="delete-shopping-list-form" @onsubmit="DeleteShoppingList" @onclick:preventDefault="true">
+    <form id="delete-shopping-list-form" @onsubmit="DeleteShoppingList" @onsubmit:preventDefault="true">
         <button type="submit" class="secondary" onclick="return confirm('Are you sure you want to delete this list?')">
             <i class="ti ti-trash"></i>
         </button>
@@ -78,13 +78,10 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </button>
-        <form @formname="OpenBuyDialogForm" method="post">
-            <button type="submit" name="OpenBuyDialog" value="true" aria-label="Buy">
-                <i class="ti ti-credit-card"></i>
-                <span>BUY</span>
-            </button>
-            <AntiforgeryToken></AntiforgeryToken>
-        </form>
+        <button type="submit" @onclick='() => OpenBuyDialog = "true"' @onclick:preventDefault="true" aria-label="Buy">
+            <i class="ti ti-credit-card"></i>
+            <span>BUY</span>
+        </button>
     </div>
 
     <div id="shopping-list-body">
@@ -111,7 +108,6 @@
         </dialog>
     }
 }
-
 
 @code {
     [Parameter] public Guid? Id { get; set; }

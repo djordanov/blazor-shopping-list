@@ -4,7 +4,7 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<form @formname="BuyForm" @onsubmit="Buy" method="post">
+<form @onsubmit="Buy" @onsubmit:preventDefault="true">
     <b>Are you sure you bought the following items?</b>
     <p>Your shopping list will be reset for the next trip!</p>
     @foreach (var section in ShoppingList.Sections ?? [])
