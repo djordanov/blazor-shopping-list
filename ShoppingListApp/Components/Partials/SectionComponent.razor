@@ -90,10 +90,15 @@
         {
             ShoppingListId = ShoppingListId,
             SectionId = Section.Id,
-            Name = NewItemName ?? ""
+            Name = NewItemName ?? "",
+            SortOrder = Section.ListItems.Count == 0
+                ? 0
+                : Section.ListItems.Select(i => i.SortOrder).Max() + 1
         };
     
         db.Item.Add(item);
+        Section.ListItems.Add(item);
+        Section.ListItems.Sort((i1, i2) => i1.SortOrder - i2.SortOrder);
         await db.SaveChangesAsync();
     }
 }
