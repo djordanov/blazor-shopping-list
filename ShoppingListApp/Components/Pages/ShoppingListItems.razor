@@ -78,7 +78,7 @@
             <i class="ti ti-shopping-cart"></i>
             <span>SHOP</span>
         </button>
-        <button type="submit" @onclick='() => OpenBuyDialog = "true"' @onclick:preventDefault="true" aria-label="Buy">
+        <button type="submit" @onclick='() => OpenBuyDialog = true' @onclick:preventDefault="true" aria-label="Buy">
             <i class="ti ti-credit-card"></i>
             <span>BUY</span>
         </button>
@@ -116,7 +116,7 @@
 
     [SupplyParameterFromForm] [MaxLength(64)] private string? NewListName { get; set; }
     [SupplyParameterFromForm] [MaxLength(64)] private string? EditListName { get; set; }
-    [SupplyParameterFromForm] private string? OpenBuyDialog { get; set; }
+    [SupplyParameterFromForm] private bool OpenBuyDialog { get; set; }
     private string Mode { get; set; } = "default";
 
     protected override async Task OnParametersSetAsync()
@@ -210,6 +210,6 @@
         }
 
         await db.SaveChangesAsync();
-        OpenBuyDialog = "false";
+        OpenBuyDialog = false;
     }
 }
