@@ -1,4 +1,3 @@
-@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using ShoppingListApp.Data
 @using ShoppingListApp.Entities
@@ -47,11 +46,10 @@
 
     private async Task EditItem()
     {
-        ArgumentNullException.ThrowIfNull(Item);
-        
         await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(Item?.Id);
+        ArgumentNullException.ThrowIfNull(Item);
         Item.Name = EditItemName ?? "";
-        db.Item.Update(Item);
         await db.SaveChangesAsync();
         Mode = "default";
     }
@@ -59,7 +57,6 @@
     private async Task DeleteItem()
     {
         ArgumentNullException.ThrowIfNull(Item);
-        
         await using var db = await DbFactory.CreateDbContextAsync();
         db.Item.Remove(Item);
         await db.SaveChangesAsync();
@@ -68,12 +65,11 @@
     
     private async Task IncrementStatus()
     {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(Item?.Id);
         ArgumentNullException.ThrowIfNull(Item);
-        
         var nextStatus = Item.GetNextItemStatus(Item.ItemStatus);
         Item.ItemStatus = nextStatus;
-        await using var db = await DbFactory.CreateDbContextAsync();
-        db.Item.Update(Item);
         await db.SaveChangesAsync();
     }
 }

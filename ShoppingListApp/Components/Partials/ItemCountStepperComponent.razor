@@ -4,33 +4,33 @@
 @inject IDbContextFactory<AppDbContext> DbFactory
 
 <div class="item-count-stepper">
-    <button type="button" class="secondary outline decrement" disabled="@(Item.Count < 1)" @onclick="Decrement">
+    <button type="button" class="secondary outline decrement" disabled="@(Item?.Count < 1)" @onclick="Decrement">
         <i class="ti ti-minus"></i>
     </button>
-    <span>@Item.Count</span>
+    <span>@Item?.Count</span>
     <button type="button" class="secondary outline increment" @onclick="Increment">
         <i class="ti ti-plus"></i>
     </button>
 </div>
 
 @code {
-    [Parameter, EditorRequired] public required Item Item { get; set; }
+    [Parameter, EditorRequired] public required Item? Item { get; set; }
 
     private async Task Decrement()
     {
-        ArgumentNullException.ThrowIfNull(Item);
         await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(Item?.Id);
+        ArgumentNullException.ThrowIfNull(Item);
         Item.Count = Math.Max(0, Item.Count - 1);
-        db.Item.Update(Item);
         await db.SaveChangesAsync();
     }
     
     private async Task Increment()
     {
-        ArgumentNullException.ThrowIfNull(Item);
         await using var db = await DbFactory.CreateDbContextAsync();
+        Item = await db.Item.FindAsync(Item?.Id);
+        ArgumentNullException.ThrowIfNull(Item);
         Item.Count += 1;
-        db.Item.Update(Item);
         await db.SaveChangesAsync();
     }
 }
