@@ -7,13 +7,13 @@
     var (icon, ariaLabel) = FromStatus(Item.ItemStatus);
 }
 
-<button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="() => OnClickCallback.InvokeAsync()">
+<button type="button" class="secondary outline item-status-button" aria-label="@ariaLabel" @onclick="() => NextStatusCallback.InvokeAsync()">
     <i class="@icon"></i>
 </button>
 
 @code {
     [Parameter, EditorRequired] public required Item Item { get; set; }
-    [Parameter, EditorRequired] public required EventCallback OnClickCallback { get; set; }
+    [Parameter, EditorRequired] public required EventCallback NextStatusCallback { get; set; }
 
     private static (string icon, string ariaLabel) FromStatus(ItemStatus itemStatus) => itemStatus switch
     {

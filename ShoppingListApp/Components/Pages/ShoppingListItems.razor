@@ -103,7 +103,7 @@
     {
         <dialog id="buy-dialog" open="@OpenBuyDialog" closedby="any">
             <article>
-                <BuyModalComponent ShoppingList="ShoppingList"></BuyModalComponent>
+                <BuyModalComponent ShoppingList="@ShoppingList" BuyCallback="Buy"></BuyModalComponent>
             </article>
         </dialog>
     }
@@ -194,5 +194,22 @@
         await db.SaveChangesAsync();
         ShoppingList.Sections.Add(section);
         ShoppingList.Sections.Sort((s1, s2) => s1.SortOrder - s2.SortOrder);
+    }
+    
+    private async Task Buy()
+    {
+        ArgumentNullException.ThrowIfNull(ShoppingList);
+        await using var db = await DbFactory.CreateDbContextAsync();
+        
+        var collectedItems = await db.Item
+            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
+            .ToListAsync();
+        foreach (var item in collectedItems)
+        {
+            item.ItemStatus = ItemStatus.Noted;
+        }
+
+        await db.SaveChangesAsync();
+        OpenBuyDialog = "false";
     }
 }

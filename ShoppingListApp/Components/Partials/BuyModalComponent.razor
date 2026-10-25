@@ -1,15 +1,11 @@
-@using Microsoft.EntityFrameworkCore
-@using ShoppingListApp.Data
 @using ShoppingListApp.Entities
-@inject IDbContextFactory<AppDbContext> DbFactory
-@inject NavigationManager NavigationManager
 
-<form @onsubmit="Buy" @onsubmit:preventDefault="true">
+<form @onsubmit="async () => await BuyCallback.InvokeAsync()" @onsubmit:preventDefault="true">
     <b>Are you sure you bought the following items?</b>
     <p>Your shopping list will be reset for the next trip!</p>
-    @foreach (var section in ShoppingList.Sections ?? [])
+    @foreach (var section in ShoppingList.Sections)
     {
-        var items = ShoppingList!.ListItems
+        var items = ShoppingList.ListItems
             .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
             .ToList();
         if (items.Count > 0)
@@ -33,20 +29,5 @@
 
 @code {
     [Parameter, EditorRequired] public ShoppingList ShoppingList { get; init; }
-
-    private async Task Buy()
-    {
-        await using var db = await DbFactory.CreateDbContextAsync();
-        
-        var collectedItems = await db.Item
-            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
-            .ToListAsync();
-        foreach (var item in collectedItems)
-        {
-            item.ItemStatus = ItemStatus.Noted;
-        }
-
-        await db.SaveChangesAsync();
-        NavigationManager.NavigateTo($"/shopping-list/{ShoppingList.Id}", forceLoad: true);
-    }
+    [Parameter, EditorRequired] public required EventCallback BuyCallback { get; set; }
 }

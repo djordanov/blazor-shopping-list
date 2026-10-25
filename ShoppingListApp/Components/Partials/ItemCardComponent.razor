@@ -6,7 +6,7 @@
 @if(Item is not null)
 {
     <div class="item-card sortable-handler" data-mode="@Mode" data-status="@Item.ItemStatus" data-item-id="@Item.Id">
-        <ItemStatusButton Item="Item" OnClickCallback="IncrementStatus"></ItemStatusButton>
+        <ItemStatusButton Item="Item" NextStatusCallback="IncrementStatus"></ItemStatusButton>
         <form @onsubmit="EditItem" @onsubmit:preventDefault="true">
             <span class="item-name" @onclick='() => Mode = "edit"'>@Item.Name</span>
             <input class="item-name" type="text" @bind="EditItemName"/>
