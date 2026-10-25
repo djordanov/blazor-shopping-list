@@ -103,7 +103,7 @@
     {
         <dialog id="buy-dialog" open="@OpenBuyDialog" closedby="any">
             <article>
-                <BuyModalComponent ShoppingList="@ShoppingList" BuyCallback="Buy"></BuyModalComponent>
+                <BuyModalComponent Items="@ShoppingList.ListItems" BuyCallback="Buy"></BuyModalComponent>
             </article>
         </dialog>
     }
@@ -199,11 +199,15 @@
     private async Task Buy()
     {
         ArgumentNullException.ThrowIfNull(ShoppingList);
+
         await using var db = await DbFactory.CreateDbContextAsync();
-        
-        var collectedItems = await db.Item
-            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected)
-            .ToListAsync();
+        ShoppingList = await db.ShoppingList // TODO refactor
+            .Include(sl => sl.Sections.OrderBy(s => s.SortOrder))
+            .Include(sl => sl.ListItems.OrderBy(i => i.SortOrder))
+            .FirstOrDefaultAsync(sl => sl.Id == Id);
+
+        var collectedItems = ShoppingList!.ListItems
+            .Where(i => i.ShoppingListId == ShoppingList.Id && i.ItemStatus == ItemStatus.Collected);
         foreach (var item in collectedItems)
         {
             item.ItemStatus = ItemStatus.Noted;

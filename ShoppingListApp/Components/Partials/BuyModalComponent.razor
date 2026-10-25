@@ -3,14 +3,14 @@
 <form @onsubmit="async () => await BuyCallback.InvokeAsync()" @onsubmit:preventDefault="true">
     <b>Are you sure you bought the following items?</b>
     <p>Your shopping list will be reset for the next trip!</p>
-    @foreach (var section in ShoppingList.Sections)
+    @foreach (var section in Items.Select(i => i.Section).Distinct().OrderBy(s => s?.SortOrder))
     {
-        var items = ShoppingList.ListItems
-            .Where(i => i.SectionId == section.Id && i.ItemStatus == ItemStatus.Collected)
+        var items = Items
+            .Where(i => i.SectionId == section?.Id && i.ItemStatus == ItemStatus.Collected)
             .ToList();
         if (items.Count > 0)
         {
-            <strong>@section.Name</strong>
+            <strong>@section?.Name</strong>
             <ul>
                 @foreach (var item in items)
                 {
@@ -28,6 +28,6 @@
 </form>
 
 @code {
-    [Parameter, EditorRequired] public ShoppingList ShoppingList { get; init; }
+    [Parameter, EditorRequired] public List<Item> Items { get; init; }
     [Parameter, EditorRequired] public required EventCallback BuyCallback { get; set; }
 }
